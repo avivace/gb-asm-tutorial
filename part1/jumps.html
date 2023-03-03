@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Jumps - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part1/jumps.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -187,18 +224,7 @@ Don’t worry, we will see later why it’s required.</p>
 <h2 id="conditional-jumps"><a class="header" href="#conditional-jumps">Conditional jumps</a></h2>
 <p>Now to the <em>really</em> interesting part.
 Let’s examine the loop responsible for copying tiles:</p>
-<pre><code class="language-rgbasm linenos start=24">	; Copy the tile data
-	ld de, Tiles
-	ld hl, $9000
-	ld bc, TilesEnd - Tiles
-CopyTiles:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyTiles
+<pre><code class="language-rgbasm linenos start=24">{{#include ../assets/hello-world.asm:memcpy}}
 </code></pre>
 <div class="box tip">
 <p>Don’t worry if you don’t quite get all the following, as we’ll see it live in action in the next lesson.
@@ -298,6 +324,5 @@ Still, it’s pretty much “where the CPU is currently reading from”, but it�
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

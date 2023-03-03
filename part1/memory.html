@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Memory - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part1/memory.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -246,8 +283,7 @@ It functions as <code>[hl]</code>, but <code>hl</code> is <em>incremented</em> j
 <code>[hld]</code>/<code>[hl-]</code> is the mirror of this one, <em>decrementing</em> <code>hl</code> instead of incrementing it.</p>
 <h2 id="an-example"><a class="header" href="#an-example">An example</a></h2>
 <p>So, if we look at the first two instructions of <code>CopyTiles</code>:</p>
-<pre><code class="language-rgbasm linenos start=29">	ld a, [de]
-	ld [hli], a
+<pre><code class="language-rgbasm linenos start=29">{{#include ../assets/hello-world.asm:memcpy_first_two}}
 </code></pre>
 <p>…we can see that we’re copying the byte in memory <em>pointed to</em> by <code>de</code> (that is, whose address is contained in <code>de</code>) into the byte pointed to by <code>hl</code>.
 Here, <code>a</code> serves as temporary storage, since the CPU is unable to perform <code>ld [hl], [de]</code> directly.</p>
@@ -318,6 +354,5 @@ Most bootleg / “repro” Game Boy cartridges you can find nowadays actually co
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

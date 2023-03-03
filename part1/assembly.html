@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Assembly basics - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part1/assembly.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -156,18 +193,7 @@
                         <h1 id="assembly-basics"><a class="header" href="#assembly-basics">Assembly basics</a></h1>
 <p>Alright, now that we know what the tools <em>do</em>, let’s see what language RGBASM speaks.
 I will take a short slice of the beginning of <code>hello-world.asm</code>, so that we agree on the line numbers, and you can get some syntax highlighting even if your editor doesn’t support it.</p>
-<pre><code class="language-rgbasm linenos start=1">INCLUDE &quot;hardware.inc&quot;
-
-SECTION &quot;Header&quot;, ROM0[$100]
-
-	jp EntryPoint
-
-	ds $150 - @, 0 ; Make room for the header
-
-EntryPoint:
-	; Shut down audio circuitry
-	ld a, 0
-	ld [rNR52], a
+<pre><code class="language-rgbasm linenos start=1">{{#include ../assets/hello-world.asm:basics}}
 </code></pre>
 <p>Let’s analyze it.
 Note that I will be ignoring a <em>lot</em> of RGBASM’s functionality; if you’re curious to know more, you should wait until parts II and III, or <a href="https://rgbds.gbdev.io/docs">read the docs</a>.</p>
@@ -219,7 +245,7 @@ The descriptions there are more succinct, since they’re intended as reminders,
 But some lines are neither, and are instead sort of metadata destined to RGBDS itself.
 Those are called <em>directives</em>, and our Hello World actually contains three of those.</p>
 <h3 id="including-other-files"><a class="header" href="#including-other-files">Including other files</a></h3>
-<pre><code class="language-rgbasm linenos">INCLUDE &quot;hardware.inc&quot;
+<pre><code class="language-rgbasm linenos">{{#include ../assets/hello-world.asm:4}}
 </code></pre>
 <p>Line 1 <em>includes</em> <code>hardware.inc</code><sup class="footnote-reference"><a href="#hw_inc_directives">3</a></sup>.
 Including a file has the same effect as if you copy-pasted it, but without having to actually do that.</p>
@@ -241,7 +267,7 @@ If you want to see where all the sections end up, you can ask RGBLINK to generat
 <p>Sections cannot be split by RGBDS, which is useful e.g. for code, since the processor executes instructions one right after the other (except jumps, as we will see later).
 There is a balance to be struck between too many and not enough sections, but it typically doesn’t matter much until banking is introduced into the picture—and it won’t be until much, much later.</p>
 <p>So, for now, let’s just assume that one section should contain things that “go together” topically, and let’s examine one of ours.</p>
-<pre><code class="language-rgbasm linenos start=3">SECTION &quot;Header&quot;, ROM0[$100]
+<pre><code class="language-rgbasm linenos start=3">{{#include ../assets/hello-world.asm:6}}
 </code></pre>
 <p>So!
 What’s happening here?
@@ -263,9 +289,7 @@ We will discuss the header in a couple lessons, but for now, just know that we n
 How do we do that?
 Well, first, we begin a section at address $100, and then we need to reserve some space.</p>
 <h3 id="reserving-space"><a class="header" href="#reserving-space">Reserving space</a></h3>
-<pre><code class="language-rgbasm linenos start=5">	jp EntryPoint
-
-	ds $150 - @, 0 ; Make room for the header
+<pre><code class="language-rgbasm linenos start=5">{{#include ../assets/hello-world.asm:8:10}}
 </code></pre>
 <p>Line 7 claims to “Make room for the header”, which I briefly mentioned just above.
 For now, let’s focus on what <code>ds</code> actually does.</p>
@@ -354,6 +378,5 @@ Also, if the argument is omitted, it defaults to what is specified using the <co
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

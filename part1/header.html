@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>The header - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part1/header.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -155,7 +192,7 @@
                     <main>
                         <h1 id="header"><a class="header" href="#header">Header</a></h1>
 <p>Let’s go back to a certain line near the top of <code>hello-world.asm</code>.</p>
-<pre><code class="language-rgbasm linenos start=7">	ds $150 - @, 0 ; Make room for the header
+<pre><code class="language-rgbasm linenos start=7">{{#include ../assets/hello-world.asm:10}}
 </code></pre>
 <p>What is this mysterious header, why are we making room for it, and more questions answered in this lesson!</p>
 <h2 id="what-is-the-header"><a class="header" href="#what-is-the-header">What is the header?</a></h2>
@@ -198,7 +235,7 @@ Its name comes from that RGBLINK typically does not produce a ROM with a valid h
 <h2 id="so-whats-the-deal-with-that-line"><a class="header" href="#so-whats-the-deal-with-that-line">So, what’s the deal with that line?</a></h2>
 <p>Right!
 This line.</p>
-<pre><code class="language-rgbasm linenos start=7">	ds $150 - @, 0 ; Make room for the header
+<pre><code class="language-rgbasm linenos start=7">{{#include ../assets/hello-world.asm:10}}
 </code></pre>
 <p>Well, let’s see what happens if we remove it (or comment it out).</p>
 <pre><code><span class="console-line hljs-meta"></span><span class="language-bash">rgbasm -L -o hello-world.o hello-world.asm</span>
@@ -243,11 +280,7 @@ Fortunately, RGBFIX since version 0.5.1 warns when it detects this mistake, as s
 </div>
 </div>
 <p>So, we prevent disaster like this:</p>
-<pre><code class="language-rgbasm linenos start=3">SECTION &quot;Header&quot;, ROM0[$100]
-
-	jp EntryPoint
-
-	ds $150 - @, 0 ; Make room for the header
+<pre><code class="language-rgbasm linenos start=3">{{#include ../assets/hello-world.asm:6:10}}
 </code></pre>
 <p>The directive <code>ds</code> stands for “define space”, and allows filling a range of memory.
 This specific line fills all bytes from $103 to $14F (inclusive) with the value $00.
@@ -259,8 +292,7 @@ When RGBASM processes the <code>ds</code> directive, <code>@</code> (which is a 
 <h2 id="bonus-the-infinite-loop"><a class="header" href="#bonus-the-infinite-loop">Bonus: the infinite loop</a></h2>
 <p>(This is not really linked to the header, but I need to explain it somewhere, and here is as good a place as any.)</p>
 <p>You may also be wondering what the point of the infinite loop at the end of the code is for.</p>
-<pre><code class="language-rgbasm">Done:
-	jp Done
+<pre><code class="language-rgbasm">{{#include ../assets/hello-world.asm:68:69}}
 </code></pre>
 <p>Well, simply enough, the CPU never stops executing instructions; so when our little Hello World is done and there is nothing left to do, we must still give the CPU some busy-work: so we make it do nothing, forever.</p>
 <p>We cannot let the CPU just run off, as it would then start executing other parts of memory as code, possibly crashing.
@@ -315,6 +347,5 @@ When RGBASM processes the <code>ds</code> directive, <code>@</code> (which is a 
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Objects - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part2/objects.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -188,24 +225,11 @@ The NES, for example, lacks such offsets, so you will notice that objects always
 <p>First off, when the Game Boy is powered on, OAM is filled with a bunch of semi-random values, which may cover the screen with some random garbage.
 Let’s fix that by first clearing OAM before enabling objects for the first time.
 Let’s add the following just after the <code>CopyTilemap</code> loop:</p>
-<pre><code class="language-rgbasm">	ld a, 0
-	ld b, 160
-	ld hl, _OAMRAM
-ClearOam:
-	ld [hli], a
-	dec b
-	jp nz, ClearOam
+<pre><code class="language-rgbasm">{{#include ../../unbricked/objects/main.asm:clear-oam}}
 </code></pre>
 <p>This is a good time to do that, since just like VRAM, the screen must be off to safely access OAM.</p>
 <p>Once OAM is clear, we can draw an object by writing its properties.</p>
-<pre><code class="language-rgbasm linenos start=67">	ld hl, _OAMRAM
-	ld a, 128 + 16
-	ld [hli], a
-	ld a, 16 + 8
-	ld [hli], a
-	ld a, 0
-	ld [hli], a
-	ld [hl], a
+<pre><code class="language-rgbasm linenos start=67">{{#include ../../unbricked/objects/main.asm:init-object}}
 </code></pre>
 <p>Remember that each object in OAM is 4 bytes, in the order Y, X, Tile ID, Attributes.
 So, the object’s top-left pixel lies 128 pixels from the top of the screen, and 16 from its left.
@@ -217,45 +241,17 @@ Tiles with IDs 128–255 are shared by both, which is useful if you have a tile 
 <p><img src="https://user-images.githubusercontent.com/14899090/196176886-8ede7369-c172-45fa-9128-cc238c15b1e8.png" alt="image" /></p>
 <p>Because we need to load this to a different area, we’ll use the address $8000 and load a graphic for our game’s paddle.
 Let’s do so right after <code>CopyTilemap</code>:</p>
-<pre><code class="language-rgbasm linenos start=46">	; Copy the tile data
-	ld de, Paddle
-	ld hl, $8000
-	ld bc, PaddleEnd - Paddle
-CopyPaddle:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyPaddle
+<pre><code class="language-rgbasm linenos start=46">{{#include ../../unbricked/objects/main.asm:copy-paddle}}
 </code></pre>
 <p>And don’t forget to add <code>Paddle</code> to the bottom of your code.</p>
-<pre><code class="language-rgbasm">Paddle:
-	dw `13333331
-	dw `30000003
-	dw `13333331
-	dw `00000000
-	dw `00000000
-	dw `00000000
-	dw `00000000
-	dw `00000000
-PaddleEnd:
+<pre><code class="language-rgbasm">{{#include ../../unbricked/objects/main.asm:paddle-gfx}}
 </code></pre>
 <p>Finally, let’s enable objects and see the result.
 Objects must be enabled by the familiar <code>rLCDC</code> register, otherwise they just don’t show up.
 (This is why we didn’t have to clear OAM in the previous lessons.)
 We will also need to initialize one of the object palettes, <code>rOBP0</code>.
 There are actually two object palettes, but we’re only going to use one.</p>
-<pre><code class="language-rgbasm linenos start=76">	; Turn the LCD on
-	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
-	ld [rLCDC], a
-
-	; During the first (blank) frame, initialize display registers
-	ld a, %11100100
-	ld [rBGP], a
-	ld a, %11100100
-	ld [rOBP0], a
+<pre><code class="language-rgbasm linenos start=76">{{#include ../../unbricked/objects/main.asm:enable-oam}}
 </code></pre>
 <h2 id="movement"><a class="header" href="#movement">Movement</a></h2>
 <p>Now that you have an object on the screen, let’s move it around.
@@ -291,39 +287,12 @@ To slow this down, we’ll use a <em>variable</em>.</p>
 To do this, let’s create another section, but putting it in <code>WRAM0</code> instead of <code>ROM0</code>.
 Unlike ROM (“Read-Only Memory”), RAM (“Random-Access Memory”) can be written to; thus, WRAM, or Work RAM, is where we can store our game’s variables.</p>
 <p>Add this to the bottom of your file:</p>
-<pre><code class="language-rgbasm linenos start=358">SECTION &quot;Counter&quot;, WRAM0
-wFrameCounter: db
+<pre><code class="language-rgbasm linenos start=358">{{#include ../../unbricked/objects/main.asm:variables}}
 </code></pre>
 <p>Now we’ll use the <code>wFrameCounter</code> variable to count how many frames have passed since we last moved the paddle.
 Every 10th frame, we’ll move the paddle by one pixel, slowing it down to 6 pixels per second.
 Don’t forget that RAM is filled with garbage values when the Game Boy starts, so we need to initialize our variables before first using them.</p>
-<pre><code class="language-rgbasm linenos start=86">	ld a, 0
-	ld [wFrameCounter], a
-
-Main:
-	ld a, [rLY]
-	cp 144
-	jp nc, Main
-WaitVBlank2:
-	ld a, [rLY]
-	cp 144
-	jp c, WaitVBlank2
-
-	ld a, [wFrameCounter]
-	inc a
-	ld [wFrameCounter], a
-	cp a, 15 ; Every 15 frames (a quarter of a second), run the following code
-	jp nz, Main
-
-	; Reset the frame counter back to 0
-	ld a, 0
-	ld [wFrameCounter], a
-
-	; Move the paddle one pixel to the right.
-	ld a, [_OAMRAM + 1]
-	inc a
-	ld [_OAMRAM + 1], a
-	jp Main
+<pre><code class="language-rgbasm linenos start=86">{{#include ../../unbricked/objects/main.asm:main-loop}}
 </code></pre>
 <p>Alright!
 Up next is us taking control of that little paddle.</p>
@@ -377,6 +346,5 @@ Up next is us taking control of that little paddle.</p>
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

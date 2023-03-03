@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Collision - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part2/collision.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -158,74 +195,21 @@
 Just like with the paddle, the first step is to create a tile for the ball and load it into VRAM.</p>
 <h2 id="graphics"><a class="header" href="#graphics">Graphics</a></h2>
 <p>Add this to the bottom of your file along with the other graphics:</p>
-<pre><code class="language-rgbasm linenos start=570">Ball:
-	dw `00033000
-	dw `00322300
-	dw `03222230
-	dw `03222230
-	dw `00322300
-	dw `00033000
-	dw `00000000
-	dw `00000000
-BallEnd:
+<pre><code class="language-rgbasm linenos start=570">{{#include ../../unbricked/collision/main.asm:ball-sprite}}
 </code></pre>
 <p>Now copy it to VRAM somewhere in your initialization code, e.g. after copying the paddle’s tile.</p>
-<pre><code class="language-rgbasm linenos start=38">	; Copy the ball tile
-	ld de, Ball
-	ld hl, $8010
-	ld bc, BallEnd - Ball
-	call Memcopy
+<pre><code class="language-rgbasm linenos start=38">{{#include ../../unbricked/collision/main.asm:ball-copy}}
 </code></pre>
 <p>In addition, we need to initialize an entry in OAM, following the code that initializes the paddle.</p>
-<pre><code class="language-rgbasm linenos start=52">	; Initialize the paddle sprite in OAM
-	ld hl, _OAMRAM
-	ld a, 128 + 16
-	ld [hli], a
-	ld a, 16 + 8
-	ld [hli], a
-	ld a, 0
-	ld [hli], a
-	ld [hli], a
-	; Now initialize the ball sprite
-	ld a, 100 + 16
-	ld [hli], a
-	ld a, 32 + 8
-	ld [hli], a
-	ld a, 1
-	ld [hli], a
-	ld a, 0
-	ld [hli], a
+<pre><code class="language-rgbasm linenos start=52">{{#include ../../unbricked/collision/main.asm:oam}}
 </code></pre>
 <p>As the ball bounces around the screen its momentum will change, sending it in different directions.
 Let’s create two new variables to track the ball’s momentum in each axis: <code>wBallMomentumX</code> and <code>wBallMomentumY</code>.</p>
-<pre><code class="language-rgbasm linenos start=581">SECTION &quot;Counter&quot;, WRAM0
-wFrameCounter: db
-
-SECTION &quot;Input Variables&quot;, WRAM0
-wCurKeys: db
-wNewKeys: db
-
-SECTION &quot;Ball Data&quot;, WRAM0
-wBallMomentumX: db
-wBallMomentumY: db
+<pre><code class="language-rgbasm linenos start=581">{{#include ../../unbricked/collision/main.asm:ram}}
 </code></pre>
 <p>We will need to initialize these before entering the game loop, so let’s do so right after we write the ball to OAM.
 By setting the X momentum to 1, and the Y momentum to -1, the ball will start out by going up and to the right.</p>
-<pre><code class="language-rgbasm linenos start=61">	; Now initialize the ball sprite
-	ld a, 100 + 16
-	ld [hli], a
-	ld a, 32 + 8
-	ld [hli], a
-	ld a, 1
-	ld [hli], a
-	ld a, 0
-	ld [hli], a
-
-	; The ball starts out going up and to the right
-	ld a, 1
-	ld [wBallMomentumX], a
-	ld a, -1
-	ld [wBallMomentumY], a
+<pre><code class="language-rgbasm linenos start=61">{{#include ../../unbricked/collision/main.asm:init}}
 </code></pre>
 <h2 id="prep-work"><a class="header" href="#prep-work">Prep work</a></h2>
 <p>Now for the fun part!
@@ -233,27 +217,7 @@ Add a bit of code at the beginning of your main loop that adds the momentum to t
 Notice that since this is the second OAM entry, we use <code>+ 4</code> for Y and <code>+ 5</code> for X.
 This can get pretty confusing, but luckily we only have two objects to keep track of.
 In the future, we’ll go over a much easier way to use OAM.</p>
-<pre><code class="language-rgbasm linenos start=90">Main:
-	ld a, [rLY]
-	cp 144
-	jp nc, Main
-WaitVBlank2:
-	ld a, [rLY]
-	cp 144
-	jp c, WaitVBlank2
-
-	; Add the ball's momentum to its position in OAM.
-	ld a, [wBallMomentumX]
-	ld b, a
-	ld a, [_OAMRAM + 5]
-	add a, b
-	ld [_OAMRAM + 5], a
-
-	ld a, [wBallMomentumY]
-	ld b, a
-	ld a, [_OAMRAM + 4]
-	add a, b
-	ld [_OAMRAM + 4], a
+<pre><code class="language-rgbasm linenos start=90">{{#include ../../unbricked/collision/main.asm:momentum}}
 </code></pre>
 <p>You might want to compile your game again to see what this does.
 If you do, you should see the ball moving around, but it will just go through the walls and then fly offscreen.</p>
@@ -264,56 +228,10 @@ We’ll need to repeat the collision check a few times, so we’re going to make
 The basic idea is that it converts the position of the sprite to a location on the tilemap.
 This way, we can check which tile our ball is touching so that we know when to bounce!</p>
 </div>
-<pre><code class="language-rgbasm linenos start=226">; Convert a pixel position to a tilemap address
-; hl = $9800 + X + Y * 32
-; @param b: X
-; @param c: Y
-; @return hl: tile address
-GetTileByPixel:
-	; First, we need to divide by 8 to convert a pixel position to a tile position.
-	; After this we want to multiply the Y position by 32.
-	; These operations effectively cancel out so we only need to mask the Y value.
-	ld a, c
-	and a, %11111000
-	ld l, a
-	ld h, 0
-	; Now we have the position * 8 in hl
-	add hl, hl ; position * 16
-	add hl, hl ; position * 32
-	; Convert the X position to an offset.
-	ld a, b
-	srl a ; a / 2
-	srl a ; a / 4
-	srl a ; a / 8
-	; Add the two offsets together.
-	add a, l
-	ld l, a
-	adc a, h
-	sub a, l
-	ld h, a
-	; Add the offset to the tilemap's base address, and we are done!
-	ld bc, $9800
-	add hl, bc
-	ret
+<pre><code class="language-rgbasm linenos start=226">{{#include ../../unbricked/collision/main.asm:get-tile}}
 </code></pre>
 <p>The next function is called <code>IsWallTile</code>, and it’s going to contain a list of tiles which the ball can bounce off of.</p>
-<pre><code class="language-rgbasm linenos start=258">; @param a: tile ID
-; @return z: set if a is a wall.
-IsWallTile:
-	cp a, $00
-	ret z
-	cp a, $01
-	ret z
-	cp a, $02
-	ret z
-	cp a, $04
-	ret z
-	cp a, $05
-	ret z
-	cp a, $06
-	ret z
-	cp a, $07
-	ret
+<pre><code class="language-rgbasm linenos start=258">{{#include ../../unbricked/collision/main.asm:is-wall-tile}}
 </code></pre>
 <p>This function might look a bit strange at first.
 Instead of returning its result in a <em>register</em>, like <code>a</code>, it returns it in <a href="../part1/operations.html#flags">a <em>flag</em></a>: <code>Z</code>!
@@ -323,21 +241,7 @@ But if we reach the last comparison and it still doesn’t set <code>Z</code>, t
 <h2 id="putting-it-together"><a class="header" href="#putting-it-together">Putting it together</a></h2>
 <p>Time to use these new functions to add collision detection!
 Add the following after the code that updates the ball’s position:</p>
-<pre><code class="language-rgbasm linenos start=112">BounceOnTop:
-	; Remember to offset the OAM position!
-	; (8, 16) in OAM coordinates is (0, 0) on the screen.
-	ld a, [_OAMRAM + 4]
-	sub a, 16 + 1
-	ld c, a
-	ld a, [_OAMRAM + 5]
-	sub a, 8
-	ld b, a
-	call GetTileByPixel ; Returns tile address in hl
-	ld a, [hl]
-	call IsWallTile
-	jp nz, BounceOnRight
-	ld a, 1
-	ld [wBallMomentumY], a
+<pre><code class="language-rgbasm linenos start=112">{{#include ../../unbricked/collision/main.asm:first-tile-collision}}
 </code></pre>
 <p>You’ll see that when we load the sprite’s positions, we subtract from them before calling <code>GetTileByPixel</code>.
 You might remember from the last chapter that OAM positions are slightly offset; that is, (0, 0) in OAM is actually completely offscreen.
@@ -345,48 +249,7 @@ These <code>sub</code> instructions undo this offset.</p>
 <p>However, there’s a bit more to this: you might have noticed that we subtracted an extra pixel from the Y position.
 That’s because (as the label suggests), this code is checking for a tile above the ball.
 We actually need to check <em>all four</em> sides of the ball so we know how to change the momentum according to which side collided, so… let’s add the rest!</p>
-<pre><code class="language-rgbasm linenos start=128">BounceOnRight:
-	ld a, [_OAMRAM + 4]
-	sub a, 16
-	ld c, a
-	ld a, [_OAMRAM + 5]
-	sub a, 8 - 1
-	ld b, a
-	call GetTileByPixel
-	ld a, [hl]
-	call IsWallTile
-	jp nz, BounceOnLeft
-	ld a, -1
-	ld [wBallMomentumX], a
-
-BounceOnLeft:
-	ld a, [_OAMRAM + 4]
-	sub a, 16
-	ld c, a
-	ld a, [_OAMRAM + 5]
-	sub a, 8 + 1
-	ld b, a
-	call GetTileByPixel
-	ld a, [hl]
-	call IsWallTile
-	jp nz, BounceOnBottom
-	ld a, 1
-	ld [wBallMomentumX], a
-
-BounceOnBottom:
-	ld a, [_OAMRAM + 4]
-	sub a, 16 - 1
-	ld c, a
-	ld a, [_OAMRAM + 5]
-	sub a, 8
-	ld b, a
-	call GetTileByPixel
-	ld a, [hl]
-	call IsWallTile
-	jp nz, BounceDone
-	ld a, -1
-	ld [wBallMomentumY], a
-BounceDone:
+<pre><code class="language-rgbasm linenos start=128">{{#include ../../unbricked/collision/main.asm:tile-collision}}
 </code></pre>
 <p>That was a lot, but now the ball bounces around your screen!
 There’s just one last thing to do before this chapter is over, and thats ball-to-paddle collision.</p>
@@ -401,27 +264,7 @@ For example, <code>cp a, b</code> sets <code>C</code> if <code>a &lt; b</code>, 
 (If you want to check <code>a &lt;= b</code> or <code>a &gt; b</code>, you can use <code>Z</code> and <code>C</code> in tandem with two <code>jp</code> instructions.)</p>
 </div>
 <p>Armed with this knowledge, let’s work through the paddle bounce code:</p>
-<pre><code class="language-rgbasm linenos start=171">	; First, check if the ball is low enough to bounce off the paddle.
-	ld a, [_OAMRAM]
-	ld b, a
-	ld a, [_OAMRAM + 4]
-	cp a, b
-	jp nz, PaddleBounceDone ; If the ball isn't at the same Y position as the paddle, it can't bounce.
-	; Now let's compare the X positions of the objects to see if they're touching.
-	ld a, [_OAMRAM + 5] ; Ball's X position.
-	ld b, a
-	ld a, [_OAMRAM + 1] ; Paddle's X position.
-	sub a, 8
-	cp a, b
-	jp c, PaddleBounceDone
-	add a, 8 + 16 ; 8 to undo, 16 as the width.
-	cp a, b
-	jp nc, PaddleBounceDone
-
-	ld a, -1
-	ld [wBallMomentumY], a
-
-PaddleBounceDone:
+<pre><code class="language-rgbasm linenos start=171">{{#include ../../unbricked/collision/main.asm:paddle-bounce}}
 </code></pre>
 <p>The Y position’s check is simple, since our paddle is flat.
 However, the X position has two checks which widen the area the ball can bounce on.
@@ -585,6 +428,5 @@ If you’d prefer to make this easier or more difficult, feel free to adjust the
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

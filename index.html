@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Home - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "index.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -170,6 +207,7 @@ If you are looking to program GBC games and run them on a GBA, you’re at the r
 <li>The “burger” <i class="fa fa-bars"></i> toggles the navigation side panel;</li>
 <li>The brush <i class="fa fa-paint-brush"></i> allows selecting a different color theme;</li>
 <li>The magnifying glass <i class="fa fa-search"></i> pops up a search bar;</li>
+<li>The world icon <i class="fa fa-globe"></i> lets you change the language of the tutorial;</li>
 <li>The printer <i class="fa fa-print"></i> gives a single-page version of the <em>entire</em> tutorial, which you can print if you want;</li>
 <li>The GitHub icon <i class="fa fa-github"></i> links to the tutorial’s source repository;</li>
 <li>The edit button <i class="fa fa-edit"></i> allows you to suggest changes to the tutorial, provided that you have a GitHub account.</li>
@@ -233,6 +271,5 @@ If you are looking to program GBC games and run them on a GBA, you’re at the r
         <script src="js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Functions - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part2/functions.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -158,19 +195,7 @@
 Let’s use <strong>functions</strong> to “factor out” code!</p>
 <p>For example, in three places, we are copying chunks of memory around.
 Let’s write a function below the <code>jp Main</code>, and let’s call it <code>Memcpy</code>, like <a href="https://man7.org/linux/man-pages/man3/memcpy.3.html">the similar C function</a>:</p>
-<pre><code class="language-rgbasm linenos start=93">; Copy bytes from one area to another.
-; @param de: Source
-; @param hl: Destination
-; @param bc: Length
-Memcopy:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, Memcopy
-	ret
+<pre><code class="language-rgbasm linenos start=93">{{#include ../../unbricked/functions/main.asm:memcpy}}
 </code></pre>
 <p>The new <code>ret</code> instruction should immediately catch our eye.
 It is, unsurprisingly, what makes execution <em>return</em> to where the function was <em>called</em> from.
@@ -184,67 +209,22 @@ We’ll see more of those as we progress.</p>
 Find each of these copy loops and replace them with a call to <code>Memcpy</code>; for this, we use the <code>call</code> instruction.
 The registers serve as parameters to the function, so we’ll leave them as-is.</p>
 <div class="table-wrapper"><table><thead><tr><th>Before</th><th>After</th></tr></thead><tbody><tr><td>
-<pre><code class="language-rgbasm linenos start=20">	; Copy the tile data
-	ld de, Tiles
-	ld hl, $9000
-	ld bc, TilesEnd - Tiles
-CopyTiles:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyTiles
+<pre><code class="language-rgbasm linenos start=20">{{#include ../../unbricked/getting-started/main.asm:copy_tiles}}
 </code></pre>
 </td><td>
-<pre><code class="language-rgbasm linenos start=20">	; Copy the tile data
-	ld de, Tiles
-	ld hl, $9000
-	ld bc, TilesEnd - Tiles
-	call Memcopy
+<pre><code class="language-rgbasm linenos start=20">{{#include ../../unbricked/functions/main.asm:copy_tiles}}
 </code></pre>
 </td></tr><tr><td>
-<pre><code class="language-rgbasm linenos start=33">	; Copy the tilemap
-	ld de, Tilemap
-	ld hl, $9800
-	ld bc, TilemapEnd - Tilemap
-CopyTilemap:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyTilemap
+<pre><code class="language-rgbasm linenos start=33">{{#include ../../unbricked/getting-started/main.asm:copy_map}}
 </code></pre>
 </td><td>
-<pre><code class="language-rgbasm linenos start=26">	; Copy the tilemap
-	ld de, Tilemap
-	ld hl, $9800
-	ld bc, TilemapEnd - Tilemap
-	call Memcopy
+<pre><code class="language-rgbasm linenos start=26">{{#include ../../unbricked/functions/main.asm:copy_map}}
 </code></pre>
 </td></tr><tr><td>
-<pre><code class="language-rgbasm linenos start=46">	; Copy the tile data
-	ld de, Paddle
-	ld hl, $8000
-	ld bc, PaddleEnd - Paddle
-CopyPaddle:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyPaddle
+<pre><code class="language-rgbasm linenos start=46">{{#include ../../unbricked/objects/main.asm:copy-paddle}}
 </code></pre>
 </td><td>
-<pre><code class="language-rgbasm linenos start=32">	; Copy the tile data
-	ld de, Paddle
-	ld hl, $8000
-	ld bc, PaddleEnd - Paddle
-	call Memcopy
+<pre><code class="language-rgbasm linenos start=32">{{#include ../../unbricked/functions/main.asm:copy_paddle}}
 </code></pre>
 </td></tr></tbody></table></div>
 <p>In the next chapter, we’ll write another function, this time to read player input.</p>
@@ -298,6 +278,5 @@ CopyPaddle:
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Getting started - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part2/getting-started.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -159,7 +196,7 @@ We will make a <a href="https://en.wikipedia.org/wiki/Breakout_%28video_game%29"
 (Though you are free to give it any other name you like, as it will be <em>your</em> project.)</p>
 <p>Open a terminal and make a new directory (<code>mkdir unbricked</code>), and then enter it (<code>cd unbricked</code>), just like you did for <a href="../part1/hello_world.html">“Hello, world!”</a>.</p>
 <p>Start by creating a file called <code>main.asm</code>, and include <code>hardware.inc</code> in your code.</p>
-<pre><code class="language-rgbasm linenos start=1">INCLUDE &quot;hardware.inc&quot;
+<pre><code class="language-rgbasm linenos start=1">{{#include ../../unbricked/getting-started/main.asm:includes}}
 </code></pre>
 <p>You may be wondering what purpose <code>hardware.inc</code> serves.
 Well, the code we write only really affects the CPU, but does not do anything with the rest of the console (not directly, anyway).
@@ -175,40 +212,16 @@ But, having to remember all the numbers (<a href="https://gbdev.io/pandocs/Power
 </div>
 <p>Next, make room for the header.
 <a href="../part1/header.html">Remember from Part Ⅰ</a> that the header is where some information that the Game Boy relies on is stored, so you don’t want to accidentally leave it out.</p>
-<pre><code class="language-rgbasm linenos start=3">SECTION &quot;Header&quot;, ROM0[$100]
-
-	jp EntryPoint
-
-	ds $150 - @, 0 ; Make room for the header
+<pre><code class="language-rgbasm linenos start=3">{{#include ../../unbricked/getting-started/main.asm:header}}
 </code></pre>
 <p>The header jumps to <code>EntryPoint</code>, so let’s write that now:</p>
-<pre><code class="language-rgbasm linenos start=9">EntryPoint:
-	; Do not turn the LCD off outside of VBlank
-WaitVBlank:
-	ld a, [rLY]
-	cp 144
-	jp c, WaitVBlank
-
-	; Turn the LCD off
-	ld a, 0
-	ld [rLCDC], a
+<pre><code class="language-rgbasm linenos start=9">{{#include ../../unbricked/getting-started/main.asm:entry}}
 </code></pre>
 <p>The next few lines wait until “VBlank”, which is the only time you can safely turn off the screen (doing so at the wrong time could damage a real Game Boy, so this is very crucial).
 We’ll explain what VBlank is and talk about it more later in the tutorial.</p>
 <p>Turning off the screen is important because loading new tiles while the screen is on is tricky—we’ll touch on how to do that in Part 3.</p>
 <p>Speaking of tiles, we’re going to load some into VRAM next, using the following code:</p>
-<pre><code class="language-rgbasm linenos start=20">	; Copy the tile data
-	ld de, Tiles
-	ld hl, $9000
-	ld bc, TilesEnd - Tiles
-CopyTiles:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyTiles
+<pre><code class="language-rgbasm linenos start=20">{{#include ../../unbricked/getting-started/main.asm:copy_tiles}}
 </code></pre>
 <p>This loop might be <a href="../part1/jumps.html#conditional-jumps">reminiscent of part Ⅰ</a>.
 It copies starting at <code>Tiles</code> to <code>$9000</code> onwards, which is the part of VRAM where our <a href="../part1/tiles.html">tiles</a> are going to be stored.
@@ -217,18 +230,7 @@ To get the number of bytes to copy, we will do just like in Part Ⅰ: using anot
 <p>That said, we haven’t written <code>Tiles</code> nor any of the related data yet.
 We’ll get to that later!</p>
 <p>Almost done now—next, write another loop, this time for copying <a href="../part1/tilemap.html">the tilemap</a>.</p>
-<pre><code class="language-rgbasm linenos start=33">	; Copy the tilemap
-	ld de, Tilemap
-	ld hl, $9800
-	ld bc, TilemapEnd - Tilemap
-CopyTilemap:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyTilemap
+<pre><code class="language-rgbasm linenos start=33">{{#include ../../unbricked/getting-started/main.asm:copy_map}}
 </code></pre>
 <p>Note that while this loop’s body is exactly the same as <code>CopyTiles</code>’s, the 3 values loaded into <code>de</code>, <code>hl</code>, and <code>bc</code> are different.
 These determine the source, destination, and size of the copy, respectively.</p>
@@ -241,16 +243,7 @@ Rather than writing the non-descript number <code>%10000001</code> (or $81 or 12
 When written to <a href="https://gbdev.io/pandocs/LCDC"><code>rLCDC</code></a>, the former causes the PPU and screen to turn back on, and the latter enables the background to be drawn.
 (There are other elements that could be drawn, but we are not enabling them yet.)
 Combining these constants must be done using <code>|</code>, the <em>binary “or”</em> operator; we’ll see why later.</p>
-<pre><code class="language-rgbasm linenos start=46">	; Turn the LCD on
-	ld a, LCDCF_ON | LCDCF_BGON
-	ld [rLCDC], a
-
-	; During the first (blank) frame, initialize display registers
-	ld a, %11100100
-	ld [rBGP], a
-
-Done:
-	jp Done
+<pre><code class="language-rgbasm linenos start=46">{{#include ../../unbricked/getting-started/main.asm:end}}
 </code></pre>
 <p>There’s one last thing we need before we can build the ROM, and that’s the graphics.
 We will draw the following screen:</p>
@@ -278,12 +271,7 @@ We already have tiles made for this project, so you can copy <a href="https://gi
 <p><img src="../assets/part2/img/screenshot.png" alt="Screenshot of our game" /></p>
 <p>That white square seems to be missing!
 You may have noticed this comment earlier, somewhere in the tile data:</p>
-<pre><code class="language-rgbasm linenos start=135">	dw `22322232
-	dw `23232323
-	dw `33333333
-	; Paste your logo here:
-
-TilesEnd:
+<pre><code class="language-rgbasm linenos start=135">{{#include ../../unbricked/getting-started/main.asm:custom_logo}}
 </code></pre>
 <p>The logo tiles were left intentionally blank so that you can choose your own.
 You can use one of the following pre-made logos, or try coming up with your own!</p>
@@ -355,6 +343,5 @@ You can use one of the following pre-made logos, or try coming up with your own!
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

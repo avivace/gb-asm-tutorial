@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>Input - GB ASM Tutorial</title>
 
-
         <!-- Custom HTML head -->
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:site:id" content="@issotm"/>
@@ -37,7 +36,6 @@
 
     </head>
     <body>
-    <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../";
@@ -118,6 +116,45 @@
                     <h1 class="menu-title">GB ASM Tutorial</h1>
 
                     <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("en");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part2/input.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -158,41 +195,7 @@
 A game that plays itself isn’t very much fun, so let’s fix that.</p>
 <p>Paste this code below your <code>Main</code> loop.
 Like <code>Memcpy</code>, this is a function that can be reused from different places, using the <code>call</code> instruction.</p>
-<pre><code class="language-rgbasm linenos start=110">Input:
-  ; Poll half the controller
-  ld a, P1F_GET_BTN
-  call .onenibble
-  ld b, a ; B7-4 = 1; B3-0 = unpressed buttons
-
-  ; Poll the other half
-  ld a, P1F_GET_DPAD
-  call .onenibble
-  swap a ; A3-0 = unpressed directions; A7-4 = 1
-  xor a, b ; A = pressed buttons + directions
-  ld b, a ; B = pressed buttons + directions
-
-  ; And release the controller
-  ld a, P1F_GET_NONE
-  ldh [rP1], a
-
-  ; Combine with previous wCurKeys to make wNewKeys
-  ld a, [wCurKeys]
-  xor a, b ; A = keys that changed state
-  and a, b ; A = keys that changed to pressed
-  ld [wNewKeys], a
-  ld a, b
-  ld [wCurKeys], a
-  ret
-
-.onenibble
-  ldh [rP1], a ; switch the key matrix
-  call .knownret ; burn 10 cycles calling a known ret
-  ldh a, [rP1] ; ignore value while waiting for the key matrix to settle
-  ldh a, [rP1]
-  ldh a, [rP1] ; this read counts
-  or a, $F0 ; A7-4 = 1; A3-0 = unpressed keys
-.knownret
-  ret
+<pre><code class="language-rgbasm linenos start=110">{{#include ../../unbricked/input/main.asm:input-routine}}
 </code></pre>
 <p>Unfortunately, reading input on the Game Boy is fairly involved (as you can see!), and it would be quite difficult to explain what this function does right now.
 So, I ask that you make an exception, and trust me that this function <em>does</em> read input.
@@ -202,55 +205,13 @@ Alright? Good!</p>
 Because of this, we only need to call <code>UpdateKeys</code> once per frame.</p>
 <p>This is important, because not only is it faster to reload the inputs that we’ve already processed, but it also means that we will always act on the same inputs, even if the player presses or releases a button mid-frame.</p>
 <p>First, let’s set aside some room for the two variables that <code>UpdateKeys</code> will use; paste this at the end of the <code>main.asm</code>:</p>
-<pre><code class="language-rgbasm linenos start=407">SECTION &quot;Input Variables&quot;, WRAM0
-wCurKeys: db
-wNewKeys: db
+<pre><code class="language-rgbasm linenos start=407">{{#include ../../unbricked/input/main.asm:vars}}
 </code></pre>
 <p>Each variable must reside in RAM, and not ROM, because ROM is “Read-Only” (so you can’t modify it).
 Additionally, each variable only needs to be one byte large, so we use <code>db</code> (“Define Byte”) to reserve one byte of RAM for each.</p>
 <p>We’re going to use the <code>and</code> opcode, which we can use to set the zero flag (<code>z</code>) to the value of the bit.
 We can use this along with the <code>PADF</code> constants in hardware.inc to read a particular key.</p>
-<pre><code class="language-rgbasm linenos start=68">Main:
-	ld a, [rLY]
-	cp 144
-	jp nc, Main
-WaitVBlank2:
-	ld a, [rLY]
-	cp 144
-	jp c, WaitVBlank2
-
-	; Check the current keys every frame and move left or right.
-	call Input
-
-	; First, check if the left button is pressed.
-CheckLeft:
-	ld a, [wCurKeys]
-	and a, PADF_LEFT
-	jp z, CheckRight
-Left:
-	; Move the paddle one pixel to the left.
-	ld a, [_OAMRAM + 1]
-	dec a
-	; If we've already hit the edge of the playfield, don't move.
-	cp a, 15
-	jp z, Main
-	ld [_OAMRAM + 1], a
-	jp Main
-
-; Then check the right button.
-CheckRight:
-	ld a, [wCurKeys]
-	and a, PADF_RIGHT
-	jp z, Main
-Right:
-	; Move the paddle one pixel to the right.
-	ld a, [_OAMRAM + 1]
-	inc a
-	; If we've already hit the edge of the playfield, don't move.
-	cp a, 105
-	jp z, Main
-	ld [_OAMRAM + 1], a
-	jp Main
+<pre><code class="language-rgbasm linenos start=68">{{#include ../../unbricked/input/main.asm:main}}
 </code></pre>
 <p>Now, if you compile the project, you should be able to move the paddle left and right using the d-pad!!
 Hooray, we have the beginnings of a game!</p>
@@ -304,6 +265,5 @@ Hooray, we have the beginnings of a game!</p>
         <script src="../js/linenos.js"></script>
 
 
-    </div>
     </body>
 </html>

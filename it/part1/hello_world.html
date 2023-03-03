@@ -1,0 +1,309 @@
+<!DOCTYPE HTML>
+<html lang="it" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Hello World! - GB ASM Tutorial</title>
+
+        <!-- Custom HTML head -->
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:site:id" content="@issotm"/>
+        <meta property="og:title" content="Hello World! - GB ASM Tutorial" />
+        <meta property="og:image" content="https://eldred.fr/gb-asm-tutorial/assets/banner/1200x628.png" />
+        <meta property="og:site_name" content="GB ASM Tutorial"/>
+
+        <meta name="description" content="A complete guide to programming Game Boy games in assembly.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../css/custom.css">
+
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item affix "><a href="../index.html">Home</a></li><li class="chapter-item affix "><a href="../roadmap.html">Roadmap</a></li><li class="chapter-item affix "><a href="../help-feedback.html">Help and feedback</a></li><li class="chapter-item affix "><li class="part-title">Part Ⅰ — Hello World!</li><li class="chapter-item "><a href="../part1/setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../part1/hello_world.html" class="active"><strong aria-hidden="true">2.</strong> Hello World!</a></li><li class="chapter-item "><a href="../part1/toolchain.html"><strong aria-hidden="true">3.</strong> The toolchain</a></li><li class="chapter-item "><a href="../part1/bin_and_hex.html"><strong aria-hidden="true">4.</strong> Binary and hexadecimal</a></li><li class="chapter-item "><a href="../part1/registers.html"><strong aria-hidden="true">5.</strong> Registers</a></li><li class="chapter-item "><a href="../part1/assembly.html"><strong aria-hidden="true">6.</strong> Assembly basics</a></li><li class="chapter-item "><a href="../part1/memory.html"><strong aria-hidden="true">7.</strong> Memory</a></li><li class="chapter-item "><a href="../part1/header.html"><strong aria-hidden="true">8.</strong> The header</a></li><li class="chapter-item "><a href="../part1/operations.html"><strong aria-hidden="true">9.</strong> Operations & flags</a></li><li class="chapter-item "><a href="../part1/jumps.html"><strong aria-hidden="true">10.</strong> Jumps</a></li><li class="chapter-item "><a href="../part1/tracing.html"><strong aria-hidden="true">11.</strong> Tracing</a></li><li class="chapter-item "><div><strong aria-hidden="true">12.</strong> Graphics</div><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../part1/tiles.html"><strong aria-hidden="true">12.1.</strong> Tiles</a></li><li class="chapter-item "><a href="../part1/palettes.html"><strong aria-hidden="true">12.2.</strong> Palettes</a></li><li class="chapter-item "><a href="../part1/tilemap.html"><strong aria-hidden="true">12.3.</strong> Tilemap</a></li></ol></li><li class="chapter-item "><a href="../part1/wrapup.html"><strong aria-hidden="true">13.</strong> Wrapping up</a></li><li class="chapter-item affix "><li class="part-title">Part Ⅱ — Our first game</li><li class="chapter-item "><a href="../part2/getting-started.html"><strong aria-hidden="true">14.</strong> Getting started</a></li><li class="chapter-item "><a href="../part2/objects.html"><strong aria-hidden="true">15.</strong> Objects</a></li><li class="chapter-item "><a href="../part2/functions.html"><strong aria-hidden="true">16.</strong> Functions</a></li><li class="chapter-item "><a href="../part2/input.html"><strong aria-hidden="true">17.</strong> Input</a></li><li class="chapter-item "><a href="../part2/collision.html"><strong aria-hidden="true">18.</strong> Collision</a></li><li class="chapter-item "><a href="../part2/wip.html"><strong aria-hidden="true">19.</strong> Work in progress</a></li><li class="chapter-item affix "><li class="part-title">Part Ⅲ — Our second game</li><li class="chapter-item "><div><strong aria-hidden="true">20.</strong> To be written...</div></li><li class="spacer"></li><li class="chapter-item affix "><a href="../next.html">Where to go next</a></li><li class="chapter-item affix "><a href="../resources.html">Resources</a></li><li class="chapter-item affix "><a href="../thanks.html">Thanks</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">GB ASM Tutorial</h1>
+
+                    <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("it");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "part1/hello_world.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/gbdev/gb-asm-tutorial" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/gbdev/gb-asm-tutorial/edit/main/po/it.po"
+                           title="Suggest an edit to the translation" aria-label="Suggest an edit to the translation">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="hello-world"><a class="header" href="#hello-world">Hello World!</a></h1>
+<p>In this lesson, we will begin by assembling our first program.
+The rest of this chapter will be dedicated to explaining how and why it works.</p>
+<p>Note that we will need to type a lot of commands, so open a terminal now.
+It’s a good idea to create a new directory (<code>mkdir gb_hello_world</code>, for example, then <code>cd gb_hello_world</code> to enter the new directory).</p>
+<p>Grab the following files (right-click each link, “Save Link As…”), and place them all in this new directory:</p>
+<ul>
+<li><a href="../assets/hello-world.asm"><code>hello-world.asm</code></a></li>
+<li><a href="https://raw.githubusercontent.com/gbdev/hardware.inc/v4.0/hardware.inc"><code>hardware.inc</code></a></li>
+</ul>
+<p>Then, still from a terminal within that directory, run the following three commands.</p>
+<div class="box warning decorated">
+<div><p>⚠️</p></div>
+<div>
+<p>To clarify where each individual command begins, I’ve added a <code>$</code> before each command, but don’t type them!</p>
+</div>
+</div>
+<pre><code><span class="console-line hljs-meta"></span><span class="language-bash">rgbasm -L -o hello-world.o hello-world.asm</span>
+<span class="console-line hljs-meta"></span><span class="language-bash">rgblink -o hello-world.gb hello-world.o</span>
+<span class="console-line hljs-meta"></span><span class="language-bash">rgbfix -v -p 0xFF hello-world.gb</span>
+</code></pre>
+<style>
+	.box.danger ol {
+		list-style-type: symbols(fixed "👎" "👍" "👍");
+	}
+</style>
+<div class="box danger decorated">
+<div><p>‼️</p></div>
+<div>
+<p>Be careful with arguments! Some options, such as <code>-o</code> here, use the argument after them as a parameter:</p>
+<ol>
+<li><code>rgbasm -L -o hello-world.asm hello-world.o</code> won’t work (and may corrupt <code>hello-world.asm</code>!)</li>
+<li><code>rgbasm -L hello-world.asm -o hello-world.o</code> will work</li>
+<li><code>rgbasm hello-world.asm -o hello-world.o -L</code> will also work</li>
+</ol>
+<p>If you need whitespace within an argument, you must quote it:</p>
+<ol>
+<li><code>rgbasm -L -o hello world.o hello world.asm</code> won’t work</li>
+<li><code>rgbasm -L -o &quot;hello world.o&quot; &quot;hello world.asm&quot;</code> will work</li>
+</ol>
+</div>
+</div>
+<p>It should look like this:</p>
+<script id="asciicast-weljUlcp1KC5GqS9jqV62dy5m" src="https://asciinema.celforyon.fr/a/weljUlcp1KC5GqS9jqV62dy5m.js" async></script>
+<p>(If you encounter an error you can’t figure out by yourself, don’t be afraid to <a href="../index.html#feedback">ask us</a>! We’ll sort it out.)</p>
+<p>Congrats!
+You just assembled your first Game Boy ROM!
+Now, we just need to run it; open BGB, right-click the window that opened, and load <code>hello-world.gb</code>.</p>
+<video controls poster="../assets/vid/hello_world.poster.png">
+	<source src="../assets/vid/hello_world.webm" type="video/webm">
+	<source src="../assets/vid/hello_world.mp4" type="video/mp4">
+<pre><code>&lt;img src=&quot;../assets/vid/hello_world.gif&quot; alt=&quot;Video demonstration in BGB&quot;&gt;
+</code></pre>
+</video>
+<div class="box danger decorated">
+<div><p>🤕</p></div>
+<div>
+<p>If you are using Wine and BGB is failing to start (or gives a blank/black screen), <a href="https://eldred.fr/bgb#getting-started-on-wine">try these troubleshooting tips</a>.</p>
+<p>And in any case, don’t hesitate to ask for help!</p>
+</div>
+</div>
+<p>You could also take a flash cart (I use the <a href="https://krikzz.com/store/home/47-everdrive-gb.html">EverDrive GB X5</a>, but there are plenty of alternatives), load up your ROM onto it, and run it on an actual console!</p>
+<p><img src="../assets/img/hello_dmg.jpg" alt="Picture of the Hello World running on a physical DMG" /></p>
+<p>Well, now that we have something working, it’s time to peel back the curtains…</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../part1/setup.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="../part1/toolchain.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../part1/setup.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../part1/toolchain.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../js/linenos.js"></script>
+
+
+    </body>
+</html>

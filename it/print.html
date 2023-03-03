@@ -1,0 +1,1995 @@
+<!DOCTYPE HTML>
+<html lang="it" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>GB ASM Tutorial</title>
+        <meta name="robots" content="noindex" />
+
+        <!-- Custom HTML head -->
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:site:id" content="@issotm"/>
+        <meta property="og:title" content="GB ASM Tutorial" />
+        <meta property="og:image" content="https://eldred.fr/gb-asm-tutorial/assets/banner/1200x628.png" />
+        <meta property="og:site_name" content="GB ASM Tutorial"/>
+
+        <meta name="description" content="A complete guide to programming Game Boy games in assembly.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="css/custom.css">
+
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item affix "><a href="index.html">Home</a></li><li class="chapter-item affix "><a href="roadmap.html">Roadmap</a></li><li class="chapter-item affix "><a href="help-feedback.html">Help and feedback</a></li><li class="chapter-item affix "><li class="part-title">Part Ⅰ — Hello World!</li><li class="chapter-item "><a href="part1/setup.html"><strong aria-hidden="true">1.</strong> Setup</a></li><li class="chapter-item "><a href="part1/hello_world.html"><strong aria-hidden="true">2.</strong> Hello World!</a></li><li class="chapter-item "><a href="part1/toolchain.html"><strong aria-hidden="true">3.</strong> The toolchain</a></li><li class="chapter-item "><a href="part1/bin_and_hex.html"><strong aria-hidden="true">4.</strong> Binary and hexadecimal</a></li><li class="chapter-item "><a href="part1/registers.html"><strong aria-hidden="true">5.</strong> Registers</a></li><li class="chapter-item "><a href="part1/assembly.html"><strong aria-hidden="true">6.</strong> Assembly basics</a></li><li class="chapter-item "><a href="part1/memory.html"><strong aria-hidden="true">7.</strong> Memory</a></li><li class="chapter-item "><a href="part1/header.html"><strong aria-hidden="true">8.</strong> The header</a></li><li class="chapter-item "><a href="part1/operations.html"><strong aria-hidden="true">9.</strong> Operations & flags</a></li><li class="chapter-item "><a href="part1/jumps.html"><strong aria-hidden="true">10.</strong> Jumps</a></li><li class="chapter-item "><a href="part1/tracing.html"><strong aria-hidden="true">11.</strong> Tracing</a></li><li class="chapter-item "><div><strong aria-hidden="true">12.</strong> Graphics</div><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="part1/tiles.html"><strong aria-hidden="true">12.1.</strong> Tiles</a></li><li class="chapter-item "><a href="part1/palettes.html"><strong aria-hidden="true">12.2.</strong> Palettes</a></li><li class="chapter-item "><a href="part1/tilemap.html"><strong aria-hidden="true">12.3.</strong> Tilemap</a></li></ol></li><li class="chapter-item "><a href="part1/wrapup.html"><strong aria-hidden="true">13.</strong> Wrapping up</a></li><li class="chapter-item affix "><li class="part-title">Part Ⅱ — Our first game</li><li class="chapter-item "><a href="part2/getting-started.html"><strong aria-hidden="true">14.</strong> Getting started</a></li><li class="chapter-item "><a href="part2/objects.html"><strong aria-hidden="true">15.</strong> Objects</a></li><li class="chapter-item "><a href="part2/functions.html"><strong aria-hidden="true">16.</strong> Functions</a></li><li class="chapter-item "><a href="part2/input.html"><strong aria-hidden="true">17.</strong> Input</a></li><li class="chapter-item "><a href="part2/collision.html"><strong aria-hidden="true">18.</strong> Collision</a></li><li class="chapter-item "><a href="part2/wip.html"><strong aria-hidden="true">19.</strong> Work in progress</a></li><li class="chapter-item affix "><li class="part-title">Part Ⅲ — Our second game</li><li class="chapter-item "><div><strong aria-hidden="true">20.</strong> To be written...</div></li><li class="spacer"></li><li class="chapter-item affix "><a href="next.html">Where to go next</a></li><li class="chapter-item affix "><a href="resources.html">Resources</a></li><li class="chapter-item affix "><a href="thanks.html">Thanks</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">GB ASM Tutorial</h1>
+
+                    <div class="right-buttons">
+                        <button id="language-toggle" class="icon-button" type="button"
+                                title="Change language" aria-label="Change language"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="language-list">
+                            <i class="fa fa-globe"></i>
+                        </button>
+                        <ul id="language-list" class="theme-popup" aria-label="Languages" role="menu">
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="en">English</a>
+                          </button></li>
+                          <li role="none"><button role="menuitem" class="theme">
+                              <a id="it">Italian</a>
+                          </button></li>
+                        </ul>
+
+                        <script>
+                          let langToggle = document.getElementById("language-toggle");
+                          let langList = document.getElementById("language-list");
+                          langToggle.addEventListener("click", (event) => {
+                              langList.style.display = langList.style.display == "block" ? "none" : "block";
+                          });
+                          let selectedLang = document.getElementById("it");
+                          selectedLang.parentNode.classList.add("theme-selected");
+
+                          // The path to the root, taking the current
+                          // language into account.
+                          let full_path_to_root = "../";
+                          // The page path (mdbook only gives us
+                          // access to the path to the Markdown file).
+                          let path = "print.md".replace(/\.md$/, ".html");
+                          for (let lang of langList.querySelectorAll("a")) {
+                              if (lang.id == "en") {
+                                  lang.href = `${full_path_to_root}${path}`;
+                              } else {
+                                  lang.href = `${full_path_to_root}${lang.id}/${path}`;
+                              }
+                          }
+                        </script>
+
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/gbdev/gb-asm-tutorial" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="home"><a class="header" href="#home">Home</a></h1>
+<p>👋 Welcome to gb-asm-tutorial!
+This tutorial will teach you how to make games for the Game Boy and Game Boy Color.</p>
+<div class="box warning decorated">
+<div><p>⚠️</p></div>
+<div>
+<p>While the Game Boy and Game Boy Color are almost the same console, <strong>the Game Boy Advance is entirely different</strong>.
+However, the GBA is able to run GB and GBC games!
+If you are looking to program GBC games and run them on a GBA, you’re at the right place; however, if you want to make games specifically for the GBA, please check out <a href="http://coranac.com/tonc/text">Tonc</a> instead.</p>
+</div>
+</div>
+<h2 id="controls"><a class="header" href="#controls">Controls</a></h2>
+<p>There are some handy icons near the top of your screen!</p>
+<ul>
+<li>The “burger” <i class="fa fa-bars"></i> toggles the navigation side panel;</li>
+<li>The brush <i class="fa fa-paint-brush"></i> allows selecting a different color theme;</li>
+<li>The magnifying glass <i class="fa fa-search"></i> pops up a search bar;</li>
+<li>The world icon <i class="fa fa-globe"></i> lets you change the language of the tutorial;</li>
+<li>The printer <i class="fa fa-print"></i> gives a single-page version of the <em>entire</em> tutorial, which you can print if you want;</li>
+<li>The GitHub icon <i class="fa fa-github"></i> links to the tutorial’s source repository;</li>
+<li>The edit button <i class="fa fa-edit"></i> allows you to suggest changes to the tutorial, provided that you have a GitHub account.</li>
+</ul>
+<p>Additionally, there are arrows to the left and to the right of the page (they are at the bottom instead on mobile) to more easily navigate to the next page.</p>
+<p>With that said, you can get started by simply navigating to the following page :)</p>
+<h2 id="licensing"><a class="header" href="#licensing">Licensing</a></h2>
+<p><strong>In short</strong>:</p>
+<ul>
+<li>Code within the tutorial is essentially <strong>public domain</strong>, meaning that you are allowed to copy it freely without restrictions.</li>
+<li>You are free to copy the tutorial’s contents (prose, diagrams, etc.), modify them, and share that, but you must give credit and license any copies permissively.</li>
+<li>This site’s <em>source code</em> can be freely copied, but you must give a license and copyright notice.</li>
+</ul>
+<p><strong>Full details</strong>, please follow these links for more information on the respective licenses:</p>
+<ul>
+<li>All the code contained within the tutorial itself is licensed under <a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/">CC0</a>. <em>To the extent possible under law, all copyright and related or neighboring rights to code presented within GB ASM Tutorial have been waived. This work is published from France.</em></li>
+<li>The contents (prose, images, etc.) of this tutorial are licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</li>
+<li>Code used to display and format the site is licensed under the <a href="https://github.com/ISSOtm/gb-asm-tutorial/blob/master/LICENSE">MIT License</a> unless otherwise specified.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="roadmap"><a class="header" href="#roadmap">Roadmap</a></h1>
+<p>The tutorial is split into three sections.
+<strong>I strongly advise you go through the tutorial in order!</strong></p>
+<p>In Part Ⅰ, we run our first “Hello World!” program, which we then dissect to learn what makes the Game Boy tick.</p>
+<p>In Part Ⅱ, we program our first game, a clone of <em>Arkanoid</em>; we learn how to prod the hardware into having something we can call a “game”.
+Along the way, we will make plenty of mistakes, so we can learn how to debug our code.</p>
+<p>And finally, Part Ⅲ is about “advanced” use of the hardware, where we learn how to make even better-looking games, and we program a Shoot ’Em Up!</p>
+<div class="box tip">
+<p>I hope the tutorial will work for you!!
+But if it doesn’t (the format doesn’t work well for everyone, and that’s okay), I encourage you to look at <a href="resources.html">some other resources</a>, which might work better for you.
+It’s also fine to take a break from time to time; feel free to read at your own pace, and to <a href="https://gbdev.io/chat">ask for clarifications</a> if anything isn’t clear to you.</p>
+</div>
+<hr />
+<p>Unfortunately, this tutorial is a work in progress.
+Currently, <strong>Part Ⅱ is being written</strong>, and Part Ⅲ should follow soon after.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="help-and-feedback"><a class="header" href="#help-and-feedback">Help and feedback</a></h1>
+<p>If you are stuck in a certain part of the tutorial, want some advice, or just wish to chat with us, <a href="https://gbdev.io/chat">the GBDev community chat</a> is the place to go!
+I actively participate there, and don’t be afraid to ask questions!
+(The “ASM” channel should be the most appropriate to discuss the tutorial, by the way.)</p>
+<p>If you are interested in contributing to or translating the tutorial, thank you!
+Follow the link above, I’d be happy to work with you.</p>
+<p>Noticed a problem with the tutorial?
+Please <a href="https://github.com/ISSOtm/gb-asm-tutorial/issues">check out our issue tracker</a>; if there is no open issue about your problem, please create a new one, or reach out to us via the link above.</p>
+<p>If you prefer email, my address is <code>tutorial@&lt;domain&gt;</code>, where you replace <code>&lt;domain&gt;</code> with this website’s domain name (it ends with <code>.fr</code>).
+Anti-spam measure, I hope you understand.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="setup"><a class="header" href="#setup">Setup</a></h1>
+<p>First, we should set up our dev environment.
+We will need:</p>
+<ol>
+<li>A POSIX environment</li>
+<li><a href="https://rgbds.gbdev.io/install">RGBDS</a> v0.5.1 (though v0.5.0 should be compatible)</li>
+<li>GNU Make (preferably a recent version)</li>
+<li>A code editor</li>
+<li>A debugging emulator</li>
+</ol>
+<div class="box tip decorated">
+<div><p>❓😕</p></div>
+<div>
+<p>The following install instructions are provided on a “best-effort” basis, but may be outdated, or not work for you for some reason.
+Don’t worry, we’re here to help: <a href="part1/../index.html#feedback">ask away in GBDev</a>, and we’ll help you with installing everything!</p>
+</div>
+</div>
+<h2 id="tools"><a class="header" href="#tools">Tools</a></h2>
+<h3 id="linux--macos"><a class="header" href="#linux--macos">Linux &amp; macOS</a></h3>
+<p>Good news: you’re already fulfilling step 1!
+You just need to <a href="https://rgbds.gbdev.io/install">install RGBDS</a>, and maybe update GNU Make.</p>
+<h4 id="macos"><a class="header" href="#macos">macOS</a></h4>
+<p>At the time of writing this, macOS (up to 11.0, the current latest release) ships a very outdated GNU Make.
+You can check it by opening a terminal, and running <code>make --version</code>, which should indicate “GNU Make” and a date, among other things.</p>
+<p>If your Make is too old, you can update it using <a href="https://brew.sh">Homebrew</a>’s formula <a href="https://formulae.brew.sh/formula/make#default"><code>make</code></a>.
+At the time of writing, this should print a warning that the updated Make has been installed as <code>gmake</code>; you can either follow the suggestion to use it as your “default” <code>make</code>, or use <code>gmake</code> instead of <code>make</code> in this tutorial.</p>
+<h4 id="linux"><a class="header" href="#linux">Linux</a></h4>
+<p>Once RGBDS is installed, open a terminal and run <code>make --version</code> to check your Make version (which is likely GNU Make).</p>
+<p>If <code>make</code> cannot be found, you may need to install your distribution’s <code>build-essentials</code>.</p>
+<h3 id="windows"><a class="header" href="#windows">Windows</a></h3>
+<p>The sad truth is that Windows is a terrible OS for development; however, you can install environments that solve most issues.</p>
+<p>On Windows 10, your best bet is <a href="https://docs.microsoft.com/en-us/windows/wsl">WSL</a>, which sort of allows running a Linux distribution within Windows.
+Install WSL 1 or WSL 2, then a distribution of your choice, and then follow these steps again, but for the Linux distribution you installed.</p>
+<p>If WSL is not an option, you can use <a href="https://www.msys2.org">MSYS2</a> or <a href="https://www.cygwin.com">Cygwin</a> instead; then check out <a href="https://rgbds.gbdev.io/install">RGBDS’ Windows install instructions</a>.
+As far as I’m aware, both of these provide a sufficiently up-to-date version of GNU Make.</p>
+<div class="box tip">
+<p>If you have programmed for other consoles, such as the GBA, check if MSYS2 isn’t already installed on your machine.
+This is because devkitPro, a popular homebrew development bundle, includes MSYS2.</p>
+</div>
+<h2 id="code-editor"><a class="header" href="#code-editor">Code editor</a></h2>
+<p>Any code editor is fine; I personally use <a href="https://www.sublimetext.com">Sublime Text</a> with its <a href="https://packagecontrol.io/packages/RGBDS">RGBDS syntax package</a>; however, you can use any text editor, including Notepad, if you’re crazy enough.
+Awesome GBDev has <a href="https://gbdev.io/resources#syntax-highlighting-packages">a section on syntax highlighting packages</a>, see there if your favorite editor supports RGBDS.</p>
+<h2 id="emulator"><a class="header" href="#emulator">Emulator</a></h2>
+<p>Using an emulator to play games is one thing; using it to program games is another.
+The two aspects an emulator must fulfill to allow an enjoyable programming experience are:</p>
+<ul>
+<li><strong>Debugging tools</strong>:
+When your code goes haywire on an actual console, it’s very difficult to figure out why or how.
+There is no console output, no way to <code>gdb</code> the program, nothing.
+However, an emulator can provide debugging tools, allowing you to control execution, inspect memory, etc.
+These are vital if you want GB dev to be <em>fun</em>, trust me!</li>
+<li><strong>Good accuracy</strong>:
+Accuracy means “how faithful to the original console something is”.
+Using a bad emulator for playing games can work (to some extent, and even then…), but using it for <em>developing</em> a game makes it likely to accidentally render your game incompatible with the actual console.
+For more info, read <a href="https://arstechnica.com/?post_type=post&amp;p=44524">this article on Ars Technica</a> (especially the <q>An emulator for every game</q> section at the top of page 2).
+You can compare GB emulator accuracy on <a href="https://daid.github.io/GBEmulatorShootout/">Daid’s GB-emulator-shootout</a>.</li>
+</ul>
+<p>The emulator I will be using for this tutorial is <a href="https://bgb.bircd.org">BGB</a> (1.5.9 when I’m writing this).
+It’s Windows-only, but macOS and Linux users can install Wine to be able to run it, and macOS users will additionally have to use the 64-bit version.
+Other debugging emulators are possible (such as SameBoy on macOS), but I will be giving directives for and including screenshots of BGB.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hello-world"><a class="header" href="#hello-world">Hello World!</a></h1>
+<p>In this lesson, we will begin by assembling our first program.
+The rest of this chapter will be dedicated to explaining how and why it works.</p>
+<p>Note that we will need to type a lot of commands, so open a terminal now.
+It’s a good idea to create a new directory (<code>mkdir gb_hello_world</code>, for example, then <code>cd gb_hello_world</code> to enter the new directory).</p>
+<p>Grab the following files (right-click each link, “Save Link As…”), and place them all in this new directory:</p>
+<ul>
+<li><a href="part1/../assets/hello-world.asm"><code>hello-world.asm</code></a></li>
+<li><a href="https://raw.githubusercontent.com/gbdev/hardware.inc/v4.0/hardware.inc"><code>hardware.inc</code></a></li>
+</ul>
+<p>Then, still from a terminal within that directory, run the following three commands.</p>
+<div class="box warning decorated">
+<div><p>⚠️</p></div>
+<div>
+<p>To clarify where each individual command begins, I’ve added a <code>$</code> before each command, but don’t type them!</p>
+</div>
+</div>
+<pre><code><span class="console-line hljs-meta"></span><span class="language-bash">rgbasm -L -o hello-world.o hello-world.asm</span>
+<span class="console-line hljs-meta"></span><span class="language-bash">rgblink -o hello-world.gb hello-world.o</span>
+<span class="console-line hljs-meta"></span><span class="language-bash">rgbfix -v -p 0xFF hello-world.gb</span>
+</code></pre>
+<style>
+	.box.danger ol {
+		list-style-type: symbols(fixed "👎" "👍" "👍");
+	}
+</style>
+<div class="box danger decorated">
+<div><p>‼️</p></div>
+<div>
+<p>Be careful with arguments! Some options, such as <code>-o</code> here, use the argument after them as a parameter:</p>
+<ol>
+<li><code>rgbasm -L -o hello-world.asm hello-world.o</code> won’t work (and may corrupt <code>hello-world.asm</code>!)</li>
+<li><code>rgbasm -L hello-world.asm -o hello-world.o</code> will work</li>
+<li><code>rgbasm hello-world.asm -o hello-world.o -L</code> will also work</li>
+</ol>
+<p>If you need whitespace within an argument, you must quote it:</p>
+<ol>
+<li><code>rgbasm -L -o hello world.o hello world.asm</code> won’t work</li>
+<li><code>rgbasm -L -o &quot;hello world.o&quot; &quot;hello world.asm&quot;</code> will work</li>
+</ol>
+</div>
+</div>
+<p>It should look like this:</p>
+<script id="asciicast-weljUlcp1KC5GqS9jqV62dy5m" src="https://asciinema.celforyon.fr/a/weljUlcp1KC5GqS9jqV62dy5m.js" async></script>
+<p>(If you encounter an error you can’t figure out by yourself, don’t be afraid to <a href="part1/../index.html#feedback">ask us</a>! We’ll sort it out.)</p>
+<p>Congrats!
+You just assembled your first Game Boy ROM!
+Now, we just need to run it; open BGB, right-click the window that opened, and load <code>hello-world.gb</code>.</p>
+<video controls poster="../assets/vid/hello_world.poster.png">
+	<source src="../assets/vid/hello_world.webm" type="video/webm">
+	<source src="../assets/vid/hello_world.mp4" type="video/mp4">
+<pre><code>&lt;img src=&quot;../assets/vid/hello_world.gif&quot; alt=&quot;Video demonstration in BGB&quot;&gt;
+</code></pre>
+</video>
+<div class="box danger decorated">
+<div><p>🤕</p></div>
+<div>
+<p>If you are using Wine and BGB is failing to start (or gives a blank/black screen), <a href="https://eldred.fr/bgb#getting-started-on-wine">try these troubleshooting tips</a>.</p>
+<p>And in any case, don’t hesitate to ask for help!</p>
+</div>
+</div>
+<p>You could also take a flash cart (I use the <a href="https://krikzz.com/store/home/47-everdrive-gb.html">EverDrive GB X5</a>, but there are plenty of alternatives), load up your ROM onto it, and run it on an actual console!</p>
+<p><img src="part1/../assets/img/hello_dmg.jpg" alt="Picture of the Hello World running on a physical DMG" /></p>
+<p>Well, now that we have something working, it’s time to peel back the curtains…</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="the-toolchain"><a class="header" href="#the-toolchain">The toolchain</a></h1>
+<p>So, in the previous lesson, we built a nice little “Hello World!” ROM.
+Now, let’s find out exactly what we did.</p>
+<h2 id="rgbasm-and-rgblink"><a class="header" href="#rgbasm-and-rgblink">RGBASM and RGBLINK</a></h2>
+<p>Let’s begin by explaining what <code>rgbasm</code> and <code>rgblink</code> do.</p>
+<p>RGBASM is an <em>assembler</em>.
+It is responsible for reading the source code (in our case, <code>hello-world.asm</code> and <code>hardware.inc</code>), and generating blocks of code with some “holes”.
+RGBASM does not always have enough information to produce a full ROM, so it does most of the work, and stores its intermediary results in what’s known as <em>object files</em> (hence the <code>.o</code> extension).</p>
+<p>RGBLINK is a <em>linker</em>.
+Its job is taking object files (or, like in our case, just one), and “linking” them into a ROM, which is to say: filling the aforementioned “holes”.
+RGBLINK’s purpose may not be obvious with programs as simple as this Hello World, but it will become much clearer in Part Ⅱ.</p>
+<p>So: Source code → <code>rgbasm</code> → Object files → <code>rgblink</code> → ROM, right?
+Well, not exactly.</p>
+<h2 id="rgbfix"><a class="header" href="#rgbfix">RGBFIX</a></h2>
+<p>RGBLINK does produces a ROM, but it’s not quite usable yet.
+See, actual ROMs have what’s called a <em>header</em>.
+It’s a special area of the ROM that contains <a href="https://gbdev.io/pandocs/The_Cartridge_Header.html">metadata about the ROM</a>; for example, the game’s name, Game Boy Color compatibility, and more.
+For simplicity, we defaulted a lot of these values to 0 for the time being; we’ll come back to them in Part Ⅱ.</p>
+<p>However, the header contains three crucial fields:</p>
+<ul>
+<li>The <a href="https://gbdev.io/pandocs/The_Cartridge_Header.html#0104-0133--nintendo-logo">Nintendo logo</a>,</li>
+<li>the <a href="https://gbdev.io/pandocs/The_Cartridge_Header.html#0148--rom-size">ROM’s size</a>,</li>
+<li>and <a href="https://gbdev.io/pandocs/The_Cartridge_Header.html#014d--header-checksum">two checksums</a>.</li>
+</ul>
+<p>When the console first starts up, it runs <a href="https://github.com/ISSOtm/gb-bootroms">a little program</a> known as the <em>boot ROM</em>, which reads and draws the logo from the cartridge, and displays the little boot animation.
+When the animation is finished, the console checks if the logo matches a copy that it stores internally; if there is a mismatch, <strong>it locks up!</strong>
+And, since it locks up, our game never gets to run… 😦
+This was meant as an anti-piracy measure; however, that measure <a href="https://en.wikipedia.org/wiki/Sega_v._Accolade">has since then been ruled as invalid</a>, so don’t worry, we are clear! 😄</p>
+<p>Similarly, the boot ROM also computes a <em><a href="https://en.wikipedia.org/wiki/Checksum">checksum</a></em> of the header, supposedly to ensure that it isn’t corrupted.
+The header also contains a copy of this checksum; if it doesn’t match what the boot ROM computed, then the boot ROM <strong>also locks up!</strong></p>
+<p>The header also contains a checksum over the whole ROM, but nothing ever uses it.
+It doesn’t hurt to get it right, though.</p>
+<p>Finally, the header also contains the ROM’s size, which is required by emulators and flash carts.</p>
+<p>RGBFIX’s role is to fill in the header, especially these 3 fields, which are required for our ROM to be guaranteed to run fine.
+The <code>-v</code> option instructs RGBFIX to make the header <strong>v</strong>alid, by injecting the Nintendo logo and computing the two checksums.
+The <code>-p 0xFF</code> option instructs it to <strong>p</strong>ad the ROM to a valid size, and set the corresponding value in the “ROM size” header field.</p>
+<p>Alright!
+So the full story is: Source code → <code>rgbasm</code> → Object files → <code>rgblink</code> → “Raw” ROM → <code>rgbfix</code> → “Fixed” ROM.
+Good.</p>
+<p>You might be wondering why RGBFIX’s functionality hasn’t been included directly in RGBLINK.
+There are some historical reasons, but RGBLINK can also be used to produce things other than ROMs (especially via the <code>-x</code> option), and RGBFIX is sometimes used without RGBLINK anywhere in sight.</p>
+<h2 id="file-names"><a class="header" href="#file-names">File names</a></h2>
+<p>Note that RGBDS does not care at all about the files’ extensions.
+Some people call their source code <code>.s</code>, for example, or their object files <code>.obj</code>.
+The file names don’t matter, either; it’s just practical to keep the same name.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="binary-and-hexadecimal"><a class="header" href="#binary-and-hexadecimal">Binary and hexadecimal</a></h1>
+<p>Before we talk about the code, a bit of background knowledge is in order.
+When programming at a low level, understanding of <em><a href="https://en.wikipedia.org/wiki/Binary_number">binary</a></em> and <em><a href="https://en.wikipedia.org/wiki/Hexadecimal">hexadecimal</a></em> is mandatory.
+Since you may already know about both of these, a summary of the RGBDS-specific information is available at the end of this lesson.</p>
+<p>So, what’s binary?
+It’s a different way to represent numbers, in what’s called <em>base 2</em>.
+We’re used to counting in <a href="https://en.wikipedia.org/wiki/Decimal">base 10</a>, so we have 10 digits: 0, 1, 2, 3, 4, 5, 6, 7, 8, and 9.
+Here’s how digits work:</p>
+<pre><code>  42 =                       4 × 10   + 2
+     =                       4 × 10^1 + 2 × 10^0
+                                  ↑          ↑
+    These tens come from us counting in base 10!
+
+1024 = 1 × 1000 + 0 × 100  + 2 × 10   + 4
+     = 1 × 10^3 + 0 × 10^2 + 2 × 10^1 + 4 × 10^0
+       ↑          ↑          ↑          ↑
+And here we can see the digits that make up the number!
+</code></pre>
+<div class="box tip decorated">
+<div><p>ℹ️</p></div>
+<div>
+<p><code>^</code> here means “to the power of”, where <code>X^N</code> is equal to multiplying <code>X</code> with itself <code>N</code> times, and <code>X ^ 0 = 1</code>.</p>
+</div>
+</div>
+<p>Decimal digits form a unique <em>decomposition</em> of numbers in powers of 10 (<em>deci</em>mal is base 10, remember?).
+But why stop at powers of 10?
+We could use other bases instead, such as base 2.
+(Why base 2 specifically will be explained later.)</p>
+<p>Binary is base 2, so there are only two digits, called <em>bits</em>: 0 and 1.
+Thus, we can generalize the principle outlined above, and write these two numbers in a similar way:</p>
+<pre><code>  42 =                                                    1 × 32  + 0 × 16  + 1 × 8   + 0 × 4   + 1 × 2   + 0
+     =                                                    1 × 2^5 + 0 × 2^4 + 1 × 2^3 + 0 × 2^2 + 1 × 2^1 + 0 × 2^0
+                                                              ↑         ↑         ↑         ↑         ↑         ↑
+                                          And since now we're counting in base 2, we're seeing twos instead of tens!
+
+1024 = 1 × 1024 + 0 × 512 + 0 × 256 + 0 × 128 + 0 × 64  + 0 × 32  + 0 × 16  + 0 × 8   + 0 × 4   + 0 × 2   + 0
+     = 1 × 2^10 + 0 × 2^9 + 0 × 2^8 + 0 × 2^7 + 0 × 2^6 + 0 × 2^5 + 0 × 2^4 + 0 × 2^3 + 0 × 2^2 + 0 × 2^1 + 0 × 2^0
+       ↑          ↑         ↑         ↑         ↑         ↑         ↑         ↑         ↑         ↑         ↑
+</code></pre>
+<p>So, by applying the same principle, we can say that in base 2, 42 is written as <code>101010</code>, and 1024 as <code>10000000000</code>. 
+Since you can’t tell ten (decimal 10) and two (binary 10) apart, RGBDS assembly has binary numbers prefixed by a percent sign: 10 is ten, and %10 is two.</p>
+<p>Okay, but why base 2 specifically?
+Rather conveniently, a bit can only be 0 or 1, which are easy to represent as “ON” or “OFF”, empty or full, etc!
+If you want, at home, to create a one-bit memory, just take a box.
+If it’s empty, it stores a 0; if it contains <em>something</em>, it stores a 1.
+Computers thus primarily manipulate binary numbers, and this has a <em>slew</em> of implications, as we will see throughout this entire tutorial.</p>
+<h2 id="hexadecimal"><a class="header" href="#hexadecimal">Hexadecimal</a></h2>
+<p>To recap, decimal isn’t practical for a computer to work with, instead relying on binary (base 2) numbers.
+Okay, but binary is really impractical to work with.
+Take %10000000000, aka 2048; when in decimal only 4 digits are required, binary instead needs 12!
+And, did you notice that I actually wrote one zero too few?
+Fortunately, hexadecimal is here to save the day! 🦸</p>
+<p>Base 16 works just the same as every other base, but with 16 digits, called <em>nibbles</em>: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, and F.</p>
+<pre><code>  42 =            2 × 16   + 10
+     =            2 × 16^1 + A × 16^0
+
+1024 = 4 × 256  + 0 × 16   + 0
+     = 4 × 16^2 + 0 × 16^1 + 0 × 16^0
+</code></pre>
+<p>Like binary, we will use a prefix to denote hexadecimal, namely <code>$</code>.
+So, 42 = $2A, and 1024 = $400.
+This is <em>much</em> more compact than binary, and slightly more than decimal, too; but what makes hexadecimal very interesting is that one nibble corresponds <em>exactly</em> to 4 bits!</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">Nibble</th><th style="text-align: center">Bits</th></tr></thead><tbody>
+<tr><td style="text-align: center">$0</td><td style="text-align: center">%0000</td></tr>
+<tr><td style="text-align: center">$1</td><td style="text-align: center">%0001</td></tr>
+<tr><td style="text-align: center">$2</td><td style="text-align: center">%0010</td></tr>
+<tr><td style="text-align: center">$3</td><td style="text-align: center">%0011</td></tr>
+<tr><td style="text-align: center">$4</td><td style="text-align: center">%0100</td></tr>
+<tr><td style="text-align: center">$5</td><td style="text-align: center">%0101</td></tr>
+<tr><td style="text-align: center">$6</td><td style="text-align: center">%0110</td></tr>
+<tr><td style="text-align: center">$7</td><td style="text-align: center">%0111</td></tr>
+<tr><td style="text-align: center">$8</td><td style="text-align: center">%1000</td></tr>
+<tr><td style="text-align: center">$9</td><td style="text-align: center">%1001</td></tr>
+<tr><td style="text-align: center">$A</td><td style="text-align: center">%1010</td></tr>
+<tr><td style="text-align: center">$B</td><td style="text-align: center">%1011</td></tr>
+<tr><td style="text-align: center">$C</td><td style="text-align: center">%1100</td></tr>
+<tr><td style="text-align: center">$D</td><td style="text-align: center">%1101</td></tr>
+<tr><td style="text-align: center">$E</td><td style="text-align: center">%1110</td></tr>
+<tr><td style="text-align: center">$F</td><td style="text-align: center">%1111</td></tr>
+</tbody></table>
+</div>
+<p>This makes it very easy to convert between binary and hexadecimal, while retaining a compact enough notation.
+Thus, hexadecimal is used a lot more than binary.
+And, don’t worry, decimal can still be used 😜</p>
+<p>(Side note: one could point that octal, i.e. base 8, would also work for this; however, we will primarily deal with units of 8 bits, for which hexadecimal works much better than octal. RGBDS supports octal via the <code>&amp;</code> prefix, but I have yet to see it used.)</p>
+<div class="box tip decorated">
+<div><p>💡</p></div>
+<div>
+<p>If you’re having trouble converting between decimal and binary/hexadecimal, check if your favorite calculator program doesn’t have a “programmer” mode, or a way to convert between bases.</p>
+</div>
+</div>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<ul>
+<li>In RGBDS assembly, the hexadecimal prefix is <code>$</code>, and the binary prefix is <code>%</code>.</li>
+<li>Hexadecimal can be used as a “compact binary” notation.</li>
+<li>Using binary or hexadecimal is useful when individual bits matter; otherwise, decimal works just as well.</li>
+<li>For when numbers get a bit too long, RGBASM allows underscores between digits (<code>123_465</code>, <code>%10_1010</code>, <code>$DE_AD_BE_EF</code>, etc.)</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="registers"><a class="header" href="#registers">Registers</a></h1>
+<p>Alright!
+Now that we know what bits are, let’s talk about how they’re used.
+Don’t worry, this is mostly prep work for the next section, where we will—finally!—look at the code 👀</p>
+<p>First, if you opened BGB, you have been greeted with just the Game Boy screen.
+So, it’s time we pop the debugger open!
+Right-click the screen, select “Other”, and click “Debugger”.
+Oh, and while we’re at this, we might as well increase the screen size a little.</p>
+<video controls poster="../assets/vid/debugger.poster.png">
+	<source src="../assets/vid/debugger.webm" type="video/webm">
+	<source src="../assets/vid/debugger.mp4" type="video/mp4">
+<pre><code>&lt;img src=&quot;../assets/vid/debugger.gif&quot; alt=&quot;Video demonstration in BGB&quot;&gt;
+</code></pre>
+</video>
+<p>The debugger may look intimidating at first, but don’t worry, soon we’ll be very familiar with it!
+For now, let’s focus on this small box near the top-right, the <em>register viewer</em>.</p>
+<p><img src="part1/../assets/img/reg_viewer.png" alt="Picture of the register viewer’s location" /></p>
+<div class="box warning decorated">
+<div><p>⚠️</p></div>
+<div>
+<p>The register viewer shows both <em>CPU registers</em> and some <em>hardware registers</em>.
+This lesson will only deal with CPU registers, so that’s why we will be ignoring some of these entries here.</p>
+</div>
+</div>
+<p>What are CPU registers?
+Well, imagine you’re preparing a cake.
+You will be following a recipe, whose instructions may be “melt 125g of chocolate and 125g of butter, blend with 2 eggs” and so on.
+You will fetch some ingredients from the fridge as needed, but you don’t cook inside the fridge; for that, you have a small workspace.</p>
+<p>Registers are pretty much the CPU’s workspace.
+They are small, tiny chunks of memory embedded directly in the CPU (only 10 bytes for the Game Boy’s CPU, and even modern CPUs have less than a kilobyte if you don’t count <a href="https://en.wikipedia.org/wiki/SIMD"><abbr title="Single Instruction, Multiple Data">SIMD</abbr></a> registers).
+Operations are not performed directly on data stored in memory, which would be equivalent to breaking eggs directly inside our fridge, but they are performed on registers.</p>
+<div class="box tip decorated">
+<div><p>ℹ️</p></div>
+<div>
+<p>There are exceptions to this rule, like many other “rules” I will give in this tutorial; I will paper over them to keep the mental complexity reasonable, but don’t treat my word as gospel either.</p>
+</div>
+</div>
+<h2 id="general-purpose-registers"><a class="header" href="#general-purpose-registers">General-purpose registers</a></h2>
+<p>CPU registers can be placed into two categories: <em>general-purpose</em> and <em>special-purpose</em>.
+A “general-purpose” register (<abbr title="General-Purpose Register">GPR</abbr> for short) can be used for storing arbitrary integer numbers.
+Some GPRs are special nonetheless, as we will see later; but the distinction is “can I store arbitrary integers in it?”.</p>
+<p>I won’t introduce special-purpose registers quite yet, as their purpose wouldn’t make sense yet.
+Rather, they will be discussed as the relevant concepts are introduced.</p>
+<p>The Game Boy CPU has seven 8-bit GPRs: <code>a</code>, <code>b</code>, <code>c</code>, <code>d</code>, <code>e</code>, <code>h</code>, and <code>l</code>.
+“8-bit” means that, well, they store 8 bits.
+Thus, they can store integers from 0 to 255 (%1111_1111 aka $FF).</p>
+<p><code>a</code> is the <em>accumulator</em>, and we will see later that it can be used in special ways.</p>
+<p>A special feature is that these registers, besides <code>a</code>, are <em>paired up</em>, and the pairs can be treated as the 16-bit registers <code>bc</code>, <code>de</code>, and <code>hl</code>.
+The pairs are <em>not</em> separate from the individual registers; for example, if <code>d</code> contains 192 ($C0) and <code>e</code> contains 222 ($DE), then <code>de</code> contains 49374 ($C0DE) = 192 × 256 + 222.
+The other pairs work similarly.</p>
+<p>Modifying <code>de</code> actually modifies both <code>d</code> and <code>e</code> at the same time, and modifying either individually also affects the pair.
+How do we modify registers?
+Let’s see how, with our first assembly instructions!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="assembly-basics"><a class="header" href="#assembly-basics">Assembly basics</a></h1>
+<p>Alright, now that we know what the tools <em>do</em>, let’s see what language RGBASM speaks.
+I will take a short slice of the beginning of <code>hello-world.asm</code>, so that we agree on the line numbers, and you can get some syntax highlighting even if your editor doesn’t support it.</p>
+<pre><code class="language-rgbasm linenos start=1">{{#include ../assets/hello-world.asm:basics}}
+</code></pre>
+<p>Let’s analyze it.
+Note that I will be ignoring a <em>lot</em> of RGBASM’s functionality; if you’re curious to know more, you should wait until parts II and III, or <a href="https://rgbds.gbdev.io/docs">read the docs</a>.</p>
+<h2 id="comments"><a class="header" href="#comments">Comments</a></h2>
+<p>We’ll start with line 10, which should appear gray above.
+Semicolons <code>;</code> denote <em>comments</em>.
+Everything from a semicolon to the end of the line is <em>ignored</em> by RGBASM.
+As you can see on line 7, comments need not be on an otherwise empty line.</p>
+<p>Comments are a staple of every good programming language; they are useful to give context as to what code is doing.
+They’re the difference between “Pre-heat the oven at 180 °C” and “Pre-heat the oven at 180 °C, any higher and the cake would burn”, basically.
+In any language, good comments are very useful; in assembly, they play an even more important role, as many common semantic facilities are not available.</p>
+<h2 id="instructions"><a class="header" href="#instructions">Instructions</a></h2>
+<p>Assembly is a very line-based language.
+Each line can contain one of two things:</p>
+<ul>
+<li>a <em>directive</em>, which instructs RGBASM to do something, or</li>
+<li>an <em>instruction</em><sup class="footnote-reference"><a href="#instr_directive">1</a></sup>, which is written directly into the ROM.</li>
+</ul>
+<p>We will talk about directives later, for now let’s focus on instructions: for example, in the snippet above, we will ignore lines 1 (<code>INCLUDE</code>), 7 (<code>ds</code>), and 3 (<code>SECTION</code>).</p>
+<p>To continue the cake-baking analogy even further, instructions are like steps in a recipe.
+The console’s processor (<abbr title="Central Processing Unit">CPU</abbr>) executes instructions one at a time, and that… eventually does something!
+Like baking a cake, drawing a “Hello World” image, or displaying a Game Boy programming tutorial!
+*wink* *wink*</p>
+<p>Instructions have a <em>mnemonic</em>, which is a name they are given, and <em>operands</em>, which indicate what they should act upon.
+For example, in “melt the chocolate and butter in a saucepan”, <em>the whole sentence</em> would be the instruction, <em>the verb</em> “melt” would be the mnemonic, and “chocolate”, “butter”, and “saucepan” the operands, i.e. some kind of parameters to the operation.</p>
+<p>Let’s discuss the most fundamental instruction, <strong><code>ld</code></strong>.
+<code>ld</code> stands for “LoaD”, and its purpose is simply to copy data from its right operand (<a href="https://en.wikipedia.org/wiki/Sides_of_an_equation">“<abbr title="Right-Hand Side">RHS</abbr>”</a>) into its left operand (<a href="https://en.wikipedia.org/wiki/Sides_of_an_equation">“<abbr title="Left-Hand Side">LHS</abbr>”</a>).
+For example, take line 11’s <code>ld a, 0</code>: it copies (“loads”) the value 0 into the 8-bit register <code>a</code><sup class="footnote-reference"><a href="#ld_imm_from">2</a></sup>.
+If you look further in the file, line 33 has <code>ld a, b</code>, which causes the value in register <code>b</code> to be copied into register <code>a</code>.</p>
+<div class="table-wrapper"><table><thead><tr><th>Instruction</th><th>Mnemonic</th><th>Effect</th></tr></thead><tbody>
+<tr><td>Load</td><td><code>ld</code></td><td>Copies values around</td></tr>
+</tbody></table>
+</div>
+<div class="box tip decorated">
+<div><p>ℹ️</p></div>
+<div>
+<p>Due to CPU limitations, not all operand combinations are valid for <code>ld</code> and many other instructions; we will talk about this when writing our own code later.</p>
+</div>
+</div>
+<div class="box tip decorated">
+<div><p>🤔</p></div>
+<div>
+<p>RGBDS has an <a href="https://rgbds.gbdev.io/docs/gbz80.7">instruction reference</a> worth bookmarking, and you can also consult it locally with <code>man 7 gbz80</code> if RGBDS is installed on your machine (except Windows…).
+The descriptions there are more succinct, since they’re intended as reminders, not as tutorials.</p>
+</div>
+</div>
+<h2 id="directives"><a class="header" href="#directives">Directives</a></h2>
+<p>In a way, instructions are destined to the console’s CPU, and comments are destined to the programmer.
+But some lines are neither, and are instead sort of metadata destined to RGBDS itself.
+Those are called <em>directives</em>, and our Hello World actually contains three of those.</p>
+<h3 id="including-other-files"><a class="header" href="#including-other-files">Including other files</a></h3>
+<pre><code class="language-rgbasm linenos">{{#include ../assets/hello-world.asm:4}}
+</code></pre>
+<p>Line 1 <em>includes</em> <code>hardware.inc</code><sup class="footnote-reference"><a href="#hw_inc_directives">3</a></sup>.
+Including a file has the same effect as if you copy-pasted it, but without having to actually do that.</p>
+<p>It allows sharing code across files easily: for example, if two files <code>a.asm</code> and <code>b.asm</code> were to include <code>hardware.inc</code>, you would only need to modify <code>hardware.inc</code> once for the modifications to apply to both <code>a.asm</code> and <code>b.asm</code>.
+If you instead copy-pasted the contents manually, you would have to edit both copies in <code>a.asm</code> and <code>b.asm</code> to apply the changes, which is more tedious and error-prone.</p>
+<p><code>hardware.inc</code> defines a bunch of constants related to interfacing with the hardware.
+Constants are basically names with a value attached, so when you write out their name, they are replaced with their value.
+This is useful because, for example, it is easier to remember the address of the <strong>LCD</strong> <strong>C</strong>ontrol register as <code>rLCDC</code> than <code>$FF40</code>.</p>
+<p>We will discuss constants in more detail in Part Ⅱ.</p>
+<h3 id="sections"><a class="header" href="#sections">Sections</a></h3>
+<p>Let’s first explain what a “section” is, then we will see what line 3 does.</p>
+<p>A section represents a contiguous range of memory, and by default, ends up <em>somewhere</em> not known in advance.
+If you want to see where all the sections end up, you can ask RGBLINK to generate a “map file” with the <code>-m</code> flag:</p>
+<pre><code><span class="console-line hljs-meta"></span><span class="language-bash">rgblink hello-world.o -m hello-world.map</span>
+</code></pre>
+<p>…and we can see, for example, where the <code>&quot;Tilemap&quot;</code> section ended up:</p>
+<pre><code>  SECTION: $05a6-$07e5 ($0240 bytes) [&quot;Tilemap&quot;]
+</code></pre>
+<p>Sections cannot be split by RGBDS, which is useful e.g. for code, since the processor executes instructions one right after the other (except jumps, as we will see later).
+There is a balance to be struck between too many and not enough sections, but it typically doesn’t matter much until banking is introduced into the picture—and it won’t be until much, much later.</p>
+<p>So, for now, let’s just assume that one section should contain things that “go together” topically, and let’s examine one of ours.</p>
+<pre><code class="language-rgbasm linenos start=3">{{#include ../assets/hello-world.asm:6}}
+</code></pre>
+<p>So!
+What’s happening here?
+Well, we are simply declaring a new section; all instructions and data after this line and until the next <code>SECTION</code> one will be placed in this newly-created section.
+Before the first <code>SECTION</code> directive, there is no “active” section, and thus generating code or data will be met with a <code>Cannot output data outside of a SECTION</code> error.</p>
+<p>The new section’s name is “<code>Header</code>”.
+Section names can contain any characters (and even be empty, if you want), and must be unique<sup class="footnote-reference"><a href="#sect_name">4</a></sup>.
+The <code>ROM0</code> keyword indicates which “memory type” the section belongs to (<a href="https://rgbds.gbdev.io/docs/v0.5.2/rgbasm.5#SECTIONS">here is a list</a>).
+We will discuss them in Part Ⅱ.</p>
+<p>The <code>[$100]</code> part is more interesting, in that it is unique to this section.
+See, I said above that:</p>
+<blockquote>
+<p>a section […] by default, ends up <em>somewhere</em> not known in advance.</p>
+</blockquote>
+<p>However, some memory locations are special, and so sometimes we need a specific section to span a specific range of memory.
+To enable this, RGBASM provides the <code>[addr]</code> syntax, which <em>forces</em> the section’s starting address to be <code>addr</code>.</p>
+<p>In this case, the memory range $100–$14F is special, as it is the <em>ROM’s header</em>.
+We will discuss the header in a couple lessons, but for now, just know that we need not to put any of our code or data in that space.
+How do we do that?
+Well, first, we begin a section at address $100, and then we need to reserve some space.</p>
+<h3 id="reserving-space"><a class="header" href="#reserving-space">Reserving space</a></h3>
+<pre><code class="language-rgbasm linenos start=5">{{#include ../assets/hello-world.asm:8:10}}
+</code></pre>
+<p>Line 7 claims to “Make room for the header”, which I briefly mentioned just above.
+For now, let’s focus on what <code>ds</code> actually does.</p>
+<p><code>ds</code> is used for <em>statically</em> allocating memory.
+It simply reserves some amount of bytes, which are set to a given value.
+The first argument to <code>ds</code>, here <code>$150 - @</code>, is <em>how many bytes to reserve</em>.
+The second (optional) argument, here <code>0</code>, is <em>what value to set each reserved byte to</em><sup class="footnote-reference"><a href="#ds_pattern">5</a></sup>.</p>
+<p>We will see why these bytes must be reserved in a couple of lessons.</p>
+<p>It is worth mentioning that this first argument here is an <em>expression</em>.
+RGBDS (thankfully!) supports arbitrary expressions essentially anywhere.
+This expression is a simple subtraction: $150 minus <code>@</code>, which is a special symbol that stands for “the current memory address”.</p>
+<div class="box tip">
+<p>A symbol is essentially “a name attached to a value”, usually a number.
+We will explore the different types of symbols throughout the tutorial, starting with labels in the next section.</p>
+<p>A numerical symbol used in an expression evaluates to its value, which must be known when compiling the ROM—in particular, it can’t depend on any register’s contents.</p>
+</div>
+<p>Oh, but you may be wondering what the “memory addresses” I keep mentioning are.
+Let’s see about those!</p>
+<hr />
+<div class="footnote-definition" id="instr_directive"><sup class="footnote-definition-label">1</sup>
+<p>Technically, instructions in RGBASM are implemented as directives, basically writing their encoded form to the ROM; but the distinction between the instructions in the source code and those in the final ROM is not worth bringing up right now.</p>
+</div>
+<div class="footnote-definition" id="ld_imm_from"><sup class="footnote-definition-label">2</sup>
+<p>The curious reader may ask where the value is copied <em>from</em>. The answer is simply that the &quot;immediate&quot; byte ($00 in this example) is stored in ROM just after the instruction’s opcode byte, and it’s what gets copied to <code>a</code>.
+We will come back to this when we talk about how instructions are encoded later on.</p>
+</div>
+<div class="footnote-definition" id="hw_inc_directives"><sup class="footnote-definition-label">3</sup>
+<p><code>hardware.inc</code> itself contains more directives, in particular to define a lot of symbols.
+They will be touched upon much later, so we won’t look into <code>hardware.inc</code> yet.</p>
+</div>
+<div class="footnote-definition" id="sect_name"><sup class="footnote-definition-label">4</sup>
+<p>Section names actually only need to be unique for “plain” sections, and function differently with “unionized” and “fragment” sections, which we will discuss much later.</p>
+</div>
+<div class="footnote-definition" id="ds_pattern"><sup class="footnote-definition-label">5</sup>
+<p>Actually, since RGBASM 0.5.0, <code>ds</code> can accept a <em>list</em> of bytes, and will repeat the pattern for as many bytes as specified.
+It just complicates the explanation slightly, so I omitted it for now.
+Also, if the argument is omitted, it defaults to what is specified using the <code>-p</code> option <strong>to RGBASM</strong>.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="memory"><a class="header" href="#memory">Memory</a></h1>
+<div class="box tip decorated">
+<div><p>🎉</p></div>
+<div>
+<p>Congrats, you have just finished the hardest lessons of the tutorial!
+Since you have the basics, from now on, we’ll be looking at more and more concrete code.</p>
+</div>
+</div>
+<p>If we look at line 29, we see <code>ld a, [de]</code>.
+Given what we just learned, this copies a value into register <code>a</code>… but where from?
+What do these brackets mean?
+To answer that, we need to talk about <em>memory</em>.</p>
+<h2 id="whats-a-memory"><a class="header" href="#whats-a-memory">What’s a memory?</a></h2>
+<p>The purpose of memory is to store information.
+On a piece of paper or a whiteboard, you can write letters to store the grocery list, for example.
+But what can you store in a computer memory?
+The answer to that question is <em>current</em><sup class="footnote-reference"><a href="#memory_magnetic">1</a></sup>.
+Computer memory is made of little cells that can store current.
+But, as we saw in the lesson about binary, the presence or absence of current can be used to encode binary numbers!</p>
+<p>tl;dr: memory <strong>stores numbers</strong>.
+In fact, memory is a <em>long</em> array of numbers, stored in cells.
+To uniquely identify each cell, it’s given a number (what else!) called its <em>address</em>.
+Like street numbers!
+The first cell has address 0, then address 1, 2, and so on.
+On the Game Boy, each cell contains <em>8 bits</em>, i.e. a <em>byte</em>.</p>
+<p>How many cells are there?
+Well, this is actually a trick question…</p>
+<h2 id="the-many-types-of-memory"><a class="header" href="#the-many-types-of-memory">The many types of memory</a></h2>
+<p>There are several memory chips in the Game Boy, but we can put them into two categories: <abbr title="Read-Only Memory">ROM</abbr> and <abbr title="Random Access Memory">RAM</abbr><sup class="footnote-reference"><a href="#rom_ram_and">2</a></sup>.
+ROM simply designates memory that cannot be written to<sup class="footnote-reference"><a href="#rom_ro">3</a></sup>, and RAM memory that can be written to.</p>
+<p>Due to how they work, the CPU, as well as the memory chips, can only use a single number for addresses.
+Let’s go back to the “street numbers” analogy: each memory chip is a street, with its own set of numbers, but the CPU has no idea what a street is, it only deals with street numbers.
+To allow the CPU to talk to multiple chips, a sort of “postal service”, the <em>chip selector</em>, is tasked with translating the CPU’s street numbers into a street &amp; street number.</p>
+<p>For example, let’s say a convention is established where addresses 0 through 1999 go to chip A’s addresses 0–1999, 2000–2999 to chip B’s 0–999, and 3000–3999 to chip C’s 0–999.
+Then, if the CPU asks for the byte at address 2791, the chip selector will ask chip B for the byte at its <em>own</em> address 791, and forward the reply to the CPU.</p>
+<p>Since addresses dealt with by the CPU do not directly correspond to the chips’ addresses, we talk about <em>logical</em> addresses (here, the CPU’s) versus <em>physical</em> addresses (here, the chips’), and the correspondence is called a <em>memory map</em>.
+Since we are programming the CPU, we will only be dealing with <strong>logical</strong> addresses, but it’s crucial to keep in mind that different addresses may be backed by different memory chips, since each chip has unique characteristics.</p>
+<p>This may sound complicated, so here is a summary:</p>
+<ul>
+<li>Memory stores numbers, each 8-bit on the Game Boy.</li>
+<li>Memory is accessed byte by byte, and the cell being accessed is determined by an <em>address</em>, which is just a number.</li>
+<li>The CPU deals with all memory uniformly, but there are several memory chips each with their own characteristics.</li>
+</ul>
+<h3 id="game-boy-memory-map"><a class="header" href="#game-boy-memory-map">Game Boy memory map</a></h3>
+<p>Let’s answer the question that introduced this section: how many memory cells are there on the Game Boy?
+Well, now, we can reframe this question as “how many logical addresses are there?” or “how many physical addresses are there in total?”.</p>
+<p>Logical addresses, which again are just numbers, are 16-bit on the Game Boy.
+Therefore, there are 2^16 = 65536 logical addresses, from $0000 to $FFFF.
+How many physical addresses, though?
+Well, here is a memory map <a href="https://gbdev.io/pandocs/Memory_Map.html">courtesy of Pan Docs</a> (though I will simplify it a bit):</p>
+<div class="table-wrapper"><table><thead><tr><th>Start</th><th>End</th><th>Name</th><th>Description</th></tr></thead><tbody>
+<tr><td>$0000</td><td>$7FFF</td><td>ROM</td><td>The game ROM, supplied by the cartridge.</td></tr>
+<tr><td>$8000</td><td>$9FFF</td><td>VRAM</td><td>Video RAM, where graphics are stored and arranged.</td></tr>
+<tr><td>$A000</td><td>$BFFF</td><td>SRAM</td><td>Save RAM, optionally supplied by the cartridge to save data to.</td></tr>
+<tr><td>$C000</td><td>$DFFF</td><td>WRAM</td><td>Work RAM, general-purpose RAM for the game to store things in.</td></tr>
+<tr><td>$FE00</td><td>$FE9F</td><td>OAM</td><td>Object Attribute Memory, where “objects” are stored.</td></tr>
+<tr><td>$FF00</td><td>$FF7F</td><td>I/O</td><td>Neither ROM nor RAM, but this is where you control the console.</td></tr>
+<tr><td>$FF80</td><td>$FFFE</td><td>HRAM</td><td>High RAM, a tiny bit of general-purpose RAM which can be accessed faster.</td></tr>
+<tr><td>$FFFF</td><td>$FFFF</td><td>IE</td><td>A lone I/O byte that’s separated from the rest for some reason.</td></tr>
+</tbody></table>
+</div>
+<p>$8000 + $2000 + $2000 + $2000 + $A0 + $80 + $7F + 1 adds up to $E1A0, or 57760 bytes of memory that can be <em>actually</em> accessed.
+The curious reader will naturally ask, “What about the remaining 7776 bytes? What happens when accessing them?”; the answer is: “It depends, it’s complicated; avoid accessing them”.</p>
+<h2 id="labels"><a class="header" href="#labels">Labels</a></h2>
+<p>Okay, memory addresses are nice, but you can’t possibly expect me to keep track of all these addresses manually, right??
+Well, fear not, for we have labels!</p>
+<p>Labels are <a href="https://rgbds.gbdev.io/docs/v0.5.1/rgbasm.5#SYMBOLS">symbols</a> which basically allow attaching a name to a byte of memory.
+A label is declared like at line 9 (<code>EntryPoint:</code>): at the beginning of the line, write the label’s name, followed by a colon, and it will refer to the byte right after itself.
+So, for example, <code>EntryPoint</code> refers to the <code>ld a, 0</code> right below it (more accurately, the first byte of that instruction, but we will get there when we get there).</p>
+<div class="box tip">
+<p>If you peek inside <code>hardware.inc</code>, you will see that for example <code>rNR52</code> is not defined as a label.
+That’s because they are <em>constants</em>, which we will touch on later; since they can be used mostly like labels, we will conflate the two for now.</p>
+</div>
+<p>Writing out a label’s name is equivalent to writing the address of the byte it’s referencing (with a few exceptions we will see in Part Ⅱ).
+For example, consider the <code>ld de, Tiles</code> at line 25.
+<code>Tiles</code> (line 64) is referring to the first byte of the tile data; if we assume that the tile data ends up being stored starting at $0193, then <code>ld de, Tiles</code> is equivalent to <code>ld de, $0193</code>!</p>
+<h2 id="whats-with-the-brackets"><a class="header" href="#whats-with-the-brackets">What’s with the brackets?</a></h2>
+<p>Right, we came into this because we wanted to know what the brackets in <code>ld a, [de]</code> mean.
+Well, they can basically be read as “at address…”.
+For example, <code>ld a, b</code> can be read as “copy into <code>a</code> the value stored in <code>b</code>”; <code>ld a, [$5414]</code> would be read as “copy into <code>a</code> the value stored at address $5414”, and <code>ld a, [de]</code> would be read as “copy into <code>a</code> the value stored at address <code>de</code>”.
+Wait, what does that mean?
+Well, if <code>de</code> contains the value $5414, then <code>ld a, [de]</code> will do the same thing as <code>ld a, [$5414]</code>.</p>
+<div class="box tip">
+<p>If you’re familiar with C, these brackets are basically how the dereference operator is implemented.</p>
+</div>
+<h3 id="hli"><a class="header" href="#hli"><code>hli</code></a></h3>
+<p>An astute reader will have noticed the <code>ld [hli], a</code> just below the <code>ld a, [de]</code> we have just studied.
+<code>[de]</code> makes sense because it’s one of the register pairs we saw a couple lessons ago, but <code>[hli]</code>?
+It’s actually a special notation, which can also be written as <code>[hl+]</code>.
+It functions as <code>[hl]</code>, but <code>hl</code> is <em>incremented</em> just after memory is accessed.
+<code>[hld]</code>/<code>[hl-]</code> is the mirror of this one, <em>decrementing</em> <code>hl</code> instead of incrementing it.</p>
+<h2 id="an-example"><a class="header" href="#an-example">An example</a></h2>
+<p>So, if we look at the first two instructions of <code>CopyTiles</code>:</p>
+<pre><code class="language-rgbasm linenos start=29">{{#include ../assets/hello-world.asm:memcpy_first_two}}
+</code></pre>
+<p>…we can see that we’re copying the byte in memory <em>pointed to</em> by <code>de</code> (that is, whose address is contained in <code>de</code>) into the byte pointed to by <code>hl</code>.
+Here, <code>a</code> serves as temporary storage, since the CPU is unable to perform <code>ld [hl], [de]</code> directly.</p>
+<p>While we’re at this, let’s examine the rest of <code>.copyTiles</code> in the following lessons!</p>
+<hr />
+<div class="footnote-definition" id="memory_magnetic"><sup class="footnote-definition-label">1</sup>
+<p>Actually, this depends a lot on the type of memory.
+A lot of memory nowadays uses magnetic storage, but to keep the explanation simple, and to parallel the explanation of binary given earlier, let’s assume that current is being used.</p>
+</div>
+<div class="footnote-definition" id="rom_ram_and"><sup class="footnote-definition-label">2</sup>
+<p>There are other types of memory, such as flash memory or EEPROM, but only Flash has been used on the Game Boy, and for only a handful of games; so we can mostly forget about them.</p>
+</div>
+<div class="footnote-definition" id="rom_ro"><sup class="footnote-definition-label">3</sup>
+<p>No, really!
+Mask ROM is created by literally punching holes into a layer of silicon using acid, and e.g. the console’s boot ROM is made of hard-wired transitors within the CPU die.
+Good luck writing to that!
+<br>
+“ROM” is sometimes (mis)used to refer to “persistent memory” chips, such as flash memory, whose write functionality was disabled.
+Most bootleg / “repro” Game Boy cartridges you can find nowadays actually contain flash; this is why you can reflash them using specialized hardware, but original cartridges cannot be.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="header"><a class="header" href="#header">Header</a></h1>
+<p>Let’s go back to a certain line near the top of <code>hello-world.asm</code>.</p>
+<pre><code class="language-rgbasm linenos start=7">{{#include ../assets/hello-world.asm:10}}
+</code></pre>
+<p>What is this mysterious header, why are we making room for it, and more questions answered in this lesson!</p>
+<h2 id="what-is-the-header"><a class="header" href="#what-is-the-header">What is the header?</a></h2>
+<p>First order of business is explaining what the header <em>is</em>.
+It’s the region of memory from $0104 to $014F (inclusive).
+It contains metadata about the ROM, such as its title, Game Boy Color compatibility, size,
+two checksums, and interestingly, the Nintendo logo that is displayed during the power-on animation.</p>
+<div class="box tip">
+<p>You can find this information and more <a href="https://gbdev.io/pandocs/The_Cartridge_Header">in the Pan Docs</a>.</p>
+</div>
+<p>Interestingly, most of the information in the header does not matter on real hardware (the ROM’s size is determined only by the capacity of the ROM chip in the cartridge, not the header byte).
+In fact, some prototype ROMs actually have incorrect header info!</p>
+<p>Most of the header was only used by Nintendo’s manufacturing department to know what components to put in the cartridge when publishing a ROM.
+Thus, only ROMs sent to Nintendo had to have a fully correct header; ROMs used for internal testing only needed to pass the boot ROM’s checks, explained further below.</p>
+<p>However, in our “modern” day and age, the header actually matters a lot.
+Emulators (including hardware emulators such as flashcarts) must emulate the hardware present in the cartridge.
+The header being the only source of information about what hardware the ROM’s cartridge should contain, they rely on some of the values in the header.</p>
+<h2 id="boot-rom"><a class="header" href="#boot-rom">Boot ROM</a></h2>
+<p>The header is intimately tied to what is called the <strong>boot ROM</strong>.</p>
+<p>The most observant and/or nostalgic of you may have noticed the lack of the boot-up animation and the Game Boy’s signature “ba-ding!” in BGB.
+When the console powers up, the CPU does not begin executing instructions at address $0100 (where our ROM’s entry point is), but at $0000.</p>
+<p>However, at that time, a small program called the <em>boot ROM</em>, burned within the CPU’s silicon, is “overlaid” on top of our ROM!
+The boot ROM is responsible for the startup animation, but it also checks the ROM’s header!
+Specifically, it verifies that the Nintendo logo and header checksums are correct; if either check fails, the boot ROM intentionally <em>locks up</em>, and our game never gets to run :(</p>
+<div class="box tip">
+<p class="box-title">For the curious</p><p>You can find a more detailed description of what the boot ROM does <a href="https://gbdev.io/pandocs/Power_Up_Sequence">in the Pan Docs</a>, as well as an explanation of the logo check.
+Beware that it is quite advanced, though.</p>
+<p>If you want to enable the boot ROMs in BGB, you must obtain a copy of the boot ROM(s), whose SHA256 checksums can be found <a href="https://github.com/ISSOtm/gb-bootroms/blob/master/sha256sums.txt">in their disassembly</a> for verification.
+If you wish, you can also compile <a href="https://github.com/LIJI32/SameBoy#compilation">SameBoy’s boot ROMs</a> and use those instead, as a free-software substitute.</p>
+<p>Then, in BGB’s options, go to the <code>System</code> tab, set the paths to the boot ROMs you wish to use, tick <code>Enable bootroms</code>, select the appropriate system, and click <code>OK</code> or <code>Apply</code>.
+Now, just reset the emulator, and voilà!</p>
+</div>
+<p>A header is typically called “valid” if it would pass the boot ROM’s checks, and “invalid” otherwise.</p>
+<h2 id="rgbfix-1"><a class="header" href="#rgbfix-1">RGBFIX</a></h2>
+<p>RGBFIX is the third component of RGBDS, whose purpose is to write a ROM’s header.
+It is separate from RGBLINK so that it can be used as a stand-alone tool.
+Its name comes from that RGBLINK typically does not produce a ROM with a valid header, so the ROM must be “fixed” before it’s production-ready.</p>
+<p>RGBFIX has <a href="https://rgbds.gbdev.io/docs/rgbfix.1">a bunch of options</a> to set various parts of the header; but the only two that we are using here are <code>-v</code>, which produces a <strong>v</strong>alid header (so, correct <a href="https://gbdev.io/pandocs/The_Cartridge_Header.html#0104-0133---nintendo-logo">Nintendo logo</a> and <a href="https://gbdev.io/pandocs/The_Cartridge_Header.html#014d---header-checksum">checksums</a>), and <code>-p 0xFF</code>, which <strong>p</strong>ads the ROM to the next valid size (using $FF as the filler byte), and writes the appropriate value to the <a href="https://gbdev.io/pandocs/The_Cartridge_Header.html#0148---rom-size">ROM size byte</a>.</p>
+<p>If you look at other projects, you may find RGBFIX invocations with more options, but these two should almost always be present.</p>
+<h2 id="so-whats-the-deal-with-that-line"><a class="header" href="#so-whats-the-deal-with-that-line">So, what’s the deal with that line?</a></h2>
+<p>Right!
+This line.</p>
+<pre><code class="language-rgbasm linenos start=7">{{#include ../assets/hello-world.asm:10}}
+</code></pre>
+<p>Well, let’s see what happens if we remove it (or comment it out).</p>
+<pre><code><span class="console-line hljs-meta"></span><span class="language-bash">rgbasm -L -o hello-world.o hello-world.asm</span>
+<span class="console-line hljs-meta"></span><span class="language-bash">rgblink -o hello-world.gb -n hello-world.sym hello-world.o</span>
+</code></pre>
+<p>(I am intentionally not running RGBFIX; we will see why in a minute.)</p>
+<div class="box danger">
+<p>Make sure the boot ROMs are not enabled for this!
+If they are, make sure to disable them (untick their box in the options, click <code>OK</code> or <code>Apply</code>, and reset the emulator).</p>
+</div>
+<p><img src="part1/../assets/img/bad_warnings.png" alt="“This rom would not work on a real gameboy.”" /></p>
+<p>As I explained, RGBFIX is responsible for writing the header, so we should use it to fix these warnings.</p>
+<pre><code><span class="console-line hljs-meta"></span><span class="language-bash">rgbfix -v -p 0xFF hello-world.gb</span>
+warning: Overwrote a non-zero byte in the Nintendo logo
+warning: Overwrote a non-zero byte in the header checksum
+</code></pre>
+<p><em>I’m sure these warnings are nothing to be worried about…</em>
+(Depending on your version of RGBDS, you may have gotten different warnings, or none at all.)</p>
+<p>Let’s run the ROM…</p>
+<p><img src="part1/../assets/img/unsupp_ram_size.png" alt="Screenshot of BGB reporting “Unsupported RAM size”" /></p>
+<p>… dismiss this pesky warning, and…</p>
+<figure>
+  <img src="part1/../assets/img/invalid_opcode.png" alt="Screenshot of BGB's debugger, the title bar reads &quot;invalid opcode&quot;">
+  <figcaption>
+    When the debugger pops open on its own, and the title bar reads "invalid opcode", you <em>might</em> have screwed up somewhere.
+  </figcaption>
+</figure>
+<p><img src="part1/../assets/img/fine.png" alt="“This is fine” meme strip" /></p>
+<p>Okay, so, what happened?</p>
+<p>As we can see from the screenshot, PC is at $0105.
+What is it doing there?</p>
+<p>…Oh, <code>EntryPoint</code> is at $0103.
+So the <code>jp</code> at $0100 went there, and started executing instructions (<code>3E CE</code> is the raw form of <code>ld a, $CE</code>), but then $ED does not encode any valid instruction, so the CPU locks up.</p>
+<p>But why is <code>EntryPoint</code> there?
+Well, as you may have figured out from the warnings RGBFIX printed, it <em>overwrites</em> the header area in the ROM.
+However, RGBLINK is <strong>not</strong> aware of the header (because RGBLINK is not only used to generate ROMs!), so you must explicitly reserve space for the header area.</p>
+<div class="box danger decorated">
+<div><p>🥴</p></div>
+<div>
+<p>Forgetting to reserve this space, and having a piece of code or data ending up there then overwritten, is a common beginner mistake that can be quite puzzling.
+Fortunately, RGBFIX since version 0.5.1 warns when it detects this mistake, as shown above.</p>
+</div>
+</div>
+<p>So, we prevent disaster like this:</p>
+<pre><code class="language-rgbasm linenos start=3">{{#include ../assets/hello-world.asm:6:10}}
+</code></pre>
+<p>The directive <code>ds</code> stands for “define space”, and allows filling a range of memory.
+This specific line fills all bytes from $103 to $14F (inclusive) with the value $00.
+Since different pieces of code and/or data cannot overlap, this ensures that the header’s memory range can safely be overwritten by RGBFIX, and that nothing else accidentally gets steamrolled instead.</p>
+<p>It may not be obvious how this <code>ds</code> ends up filling that specific memory range.
+The 3-byte <code>jp</code> covers memory addresses $100, $101, and $102.
+(We start at $100 because that’s where the <code>SECTION</code> is hardcoded to be.)
+When RGBASM processes the <code>ds</code> directive, <code>@</code> (which is a special symbol that evaluates to “the current address”) thus has the value $103, so it fills <code>$150 - $103 = $4D</code> bytes with zeros, so $103, $104, …, $14E, $14F.</p>
+<h2 id="bonus-the-infinite-loop"><a class="header" href="#bonus-the-infinite-loop">Bonus: the infinite loop</a></h2>
+<p>(This is not really linked to the header, but I need to explain it somewhere, and here is as good a place as any.)</p>
+<p>You may also be wondering what the point of the infinite loop at the end of the code is for.</p>
+<pre><code class="language-rgbasm">{{#include ../assets/hello-world.asm:68:69}}
+</code></pre>
+<p>Well, simply enough, the CPU never stops executing instructions; so when our little Hello World is done and there is nothing left to do, we must still give the CPU some busy-work: so we make it do nothing, forever.</p>
+<p>We cannot let the CPU just run off, as it would then start executing other parts of memory as code, possibly crashing.
+(See for yourself: remove or comment out these two lines, re-<a href="part1/hello_world.html">compile the ROM</a>, and see what happens!)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="operations--flags"><a class="header" href="#operations--flags">Operations &amp; flags</a></h1>
+<p>Alright, we know how to pass values around, but just copying numbers is no fun; we want to modify them!</p>
+<p>The GB CPU does not provide every operation under the sun (for example, there is no multiplication instruction), but we can just program those ourselves with what we have.
+Let’s talk about some of the operations that it <em>does</em> have; I will be omitting some not used in the Hello World for now.</p>
+<h2 id="arithmetic"><a class="header" href="#arithmetic">Arithmetic</a></h2>
+<p>The simplest arithmetic instructions the CPU supports are <code>inc</code> and <code>dec</code>, which INCrement and DECrement their operand, respectively.
+(If you aren’t sure, “to increment” means “to add 1”, and “to decrement” means “to subtract 1”.)
+So for example, the <code>dec bc</code> at line 32 of <code>hello-world.asm</code> simply subtracts 1 from <code>bc</code>.</p>
+<p>Okay, cool!
+Can we go a bit faster, though?
+Sure we can, with <code>add</code> and <code>sub</code>!
+These respectively ADD and SUBtract arbitrary values (either a constant, or a register).
+Neither is used in the tutorial, but a sibling of <code>sub</code>’s is: have you noticed little <code>cp</code> over at line 17?
+<code>cp</code> allows ComParing values.
+It works the same as <code>sub</code>, but it discards the result instead of writing it back.
+“Wait, so it does nothing?” you may ask; well, it <em>does</em> update the <strong>flags</strong>.</p>
+<h2 id="flags"><a class="header" href="#flags">Flags</a></h2>
+<p>The time has come to talk about the special-purpose register (remember those?) <code>f</code>, for, well, <em>flags</em>.
+The <code>f</code> register contains 4 bits, called “flags”, which are updated depending on an operation’s results.
+These 4 flags are:</p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Description</th></tr></thead><tbody>
+<tr><td>Z</td><td>Zero flag</td></tr>
+<tr><td>N</td><td>Addition/subtraction</td></tr>
+<tr><td>H</td><td>Half-carry</td></tr>
+<tr><td>C</td><td>Carry</td></tr>
+</tbody></table>
+</div>
+<p>Yes, there is a flag called “C” and a register called “c”, and <strong>they are different, unrelated things</strong>.
+This makes the syntax a bit confusing at the beginning, but they are always used in different contexts, so it’s fine.</p>
+<p>We will forget about N and H for now; let’s focus on Z and C.
+Z is the simplest flag: it gets set when an operation’s result is 0, and gets reset otherwise.
+C is set when an operation <em>overflows</em> or <em>underflows</em>.</p>
+<p>What’s an overflow?
+Let’s take the simple instruction <code>add a, 42</code>.
+This simply adds 42 to the contents of register <code>a</code>, and writes the result back into <code>a</code>.</p>
+<pre><code class="language-rgbasm">    ld a, 200
+    add a, 42
+</code></pre>
+<p>At the end of this snippet, <code>a</code> equals 200 + 42 = 242, great!
+But what if I write this instead?</p>
+<pre><code class="language-rgbasm">    ld a, 220
+    add a, 42
+</code></pre>
+<p>Well, one could think that <code>a</code> would be equal to 220 + 42 = 262, but that would be incorrect.
+Remember, <code>a</code> is an 8-bit register, <em>it can only store eight bits of information</em>!
+And if we were to write 262 in binary, we would get %100000110, which requires at least 9 bits…
+So what happens?
+Simply, that ninth bit is <em>lost</em>, and the value that we end up with is %00000110 = 6.
+This is called an <em>overflow</em>: after <strong>adding</strong>, we get a value <strong>smaller</strong> than what we started with.</p>
+<p>We can also do the opposite with <code>sub</code>, and—for example—subtract 42 from 6; as we know, for all <code>X</code> and <code>Y</code>, <code>X + Y - Y = X</code>, and we just saw that 220 + 42 = 6 (this is called <em>modulo 256 arithmetic</em>, by the way); so, 6 - 42 = (220 + 42) - 42 = 220.
+This is called an <em>underflow</em>: after <strong>subtracting</strong>, we get a value <strong>greater</strong> than what we started with.</p>
+<p>When an operation is performed, it sets the carry flag if an overflow or underflow occurred, and clears it otherwise.
+(We will see later that not all operations update the carry flag, though.)</p>
+<div class="box tip">
+<p class="box-title">Summary</p><ul>
+<li>We can add and subtract numbers.</li>
+<li>The Z flag lets us know if the result was 0.</li>
+<li>However, registers can only store a limited range of integers.</li>
+<li>Going outside this range is called an <strong>overflow</strong> or <strong>underflow</strong>, for addition and subtraction respectively.</li>
+<li>The C flag lets us know if either occurred.</li>
+</ul>
+</div>
+<h2 id="comparison"><a class="header" href="#comparison">Comparison</a></h2>
+<p>Now, let’s talk more about how <code>cp</code> is used to compare numbers.
+Here is a refresher: <code>cp</code> subtracts its operand from <code>a</code> and updates flags accordingly, but doesn’t write the result back.
+We can use flags to check properties about the values being compared, and we will see in the next lesson how to use the flags.</p>
+<p>The simplest interaction is with the Z flag.
+If it’s set, we know that the subtraction yielded 0, i.e. <code>a - operand == 0</code>; therefore, <code>a == operand</code>!
+If it’s not set, well, then we know that <code>a != operand</code>.</p>
+<p>Okay, checking for equality is nice, but we may also want to perform <em>comparisons</em>.
+Fret not, for the carry flag is here to do just that!
+See, when performing a subtraction, the carry flag gets set when the result goes below 0—but that’s just a fancy way of saying “becomes negative”!</p>
+<p>So, when the carry flag gets set, we know that <code>a - operand &lt; 0</code>, therefore that <code>a &lt; operand</code>..!
+And, conversely, we know that if it’s <em>not</em> set, <code>a &gt;= operand</code>.
+Great!</p>
+<h2 id="instruction-summary"><a class="header" href="#instruction-summary">Instruction summary</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Instruction</th><th>Mnemonic</th><th>Effect</th></tr></thead><tbody>
+<tr><td>Add</td><td><code>add</code></td><td>Adds values to <code>a</code></td></tr>
+<tr><td>Subtract</td><td><code>sub</code></td><td>Subtracts values from <code>a</code></td></tr>
+<tr><td>Compare</td><td><code>cp</code></td><td>Compares values with what’s contained in <code>a</code></td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="jumps"><a class="header" href="#jumps">Jumps</a></h1>
+<div class="box tip">
+<p>Once this lesson is done, we will be able to understand all of <code>CopyTiles</code>!</p>
+</div>
+<p>So far, all the code we have seen was linear: it executes top to bottom.
+But this doesn’t scale: sometimes, we need to perform certain actions depending on the result of others (“if the crêpes start sticking, grease the pan again”), and sometimes, we need to perform actions repeatedly (“If there is some batter left, repeat from step 5”).</p>
+<p>Both of these imply reading the recipe non-linearly.
+In assembly, this is achieved using <em>jumps</em>.</p>
+<p>The CPU has a special-purpose register called “PC”, for Program Counter.
+It contains the address of the instruction currently being executed<sup class="footnote-reference"><a href="#pc_updates">1</a></sup>, like how you’d keep in mind the number of the recipe step you’re currently doing.
+PC increases automatically as the CPU reads instructions, so “by default” they are read sequentially; however, jump instructions allow writing a different value to PC, effectively <em>jumping</em> to another piece of the program.
+Hence the name.</p>
+<p>Okay, so, let’s talk about those jump instructions, shall we?
+There are four of them:</p>
+<div class="table-wrapper"><table><thead><tr><th>Instruction</th><th>Mnemonic</th><th>Effect</th></tr></thead><tbody>
+<tr><td>Jump</td><td><code>jp</code></td><td>Jump execution to a location</td></tr>
+<tr><td>Jump Relative</td><td><code>jr</code></td><td>Jump to a location close by</td></tr>
+<tr><td>Call</td><td><code>call</code></td><td>Call a subroutine</td></tr>
+<tr><td>Return</td><td><code>ret</code></td><td>Return from a subroutine</td></tr>
+</tbody></table>
+</div>
+<p>We will focus on <code>jp</code> for now.
+<code>jp</code>, such as the one line 5, simply sets PC to its argument, jumping execution there.
+In other words, after executing <code>jp EntryPoint</code> (line 5), the next instruction executed is the one below <code>EntryPoint</code> (line <!-- should be 9 + 1 --> 16).</p>
+<div class="box tip decorated">
+<div><p>🤔</p></div>
+<div>
+<p>You may be wondering what is the point of that specific <code>jp</code>.
+Don’t worry, we will see later why it’s required.</p>
+</div>
+</div>
+<h2 id="conditional-jumps"><a class="header" href="#conditional-jumps">Conditional jumps</a></h2>
+<p>Now to the <em>really</em> interesting part.
+Let’s examine the loop responsible for copying tiles:</p>
+<pre><code class="language-rgbasm linenos start=24">{{#include ../assets/hello-world.asm:memcpy}}
+</code></pre>
+<div class="box tip">
+<p>Don’t worry if you don’t quite get all the following, as we’ll see it live in action in the next lesson.
+If you’re having trouble, try going to the next lesson, watch the code execute step by step; then, coming back here, it should make more sense.</p>
+</div>
+<p>First, we copy <code>Tiles</code>, the address of the first byte of tile data, into <code>de</code>.
+Then, we set <code>hl</code> to $9000, which is the address where we will start copying the tile data to.
+<code>ld bc, TilesEnd - Tiles</code> sets <code>bc</code> to the length of the tile data: <code>TilesEnd</code> is the address of the first byte <em>after</em> the tile data, so subtracting <code>Tiles</code> to that yields the length.</p>
+<p>So, basically:</p>
+<ul>
+<li><code>de</code> contains the address where data will be copied from;</li>
+<li><code>hl</code> contains the address where data will be copied to;</li>
+<li><code>bc</code> contains how many bytes we have to copy.</li>
+</ul>
+<p>Then we arrive at the main loop.
+We read one byte from the source (line 29), and write it to the destination (line 30).
+We increment the destination (via the implicit <code>inc hl</code> done by <code>ld [hli], a</code>) and source pointers (line 31), so the following loop iteration processes the next byte.</p>
+<p>Here’s the interesting part: since we’ve just copied one byte, that means we have one less to go, so we <code>dec bc</code>.
+(We have seen <code>dec</code> two lessons ago; as a refresher, it simply decreases the value stored in <code>bc</code> by one.)
+Since <code>bc</code> contains the amount of bytes that still need to be copied, it’s trivial to see that we should simply repeat the operation if <code>bc</code> != 0.</p>
+<div class="box danger decorated">
+<div><p>😓</p></div>
+<div>
+<p><code>dec</code> usually updates flags, but unfortunately <code>dec bc</code> doesn’t, so we must check if <code>bc</code> reached 0 manually.</p>
+</div>
+</div>
+<p><code>ld a, b</code> and <code>or a, c</code> “bitwise OR” <code>b</code> and <code>c</code> together; it’s enough to know for now that it leaves 0 in <code>a</code> if and only if <code>bc</code> == 0.
+And <code>or</code> updates the Z flag!
+So, after line 34, the Z flag is set if and only if <code>bc</code> == 0, that is, if we should exit the loop.</p>
+<p>And this is where conditional jumps come into the picture!
+See, it’s possible to <strong>conditionally</strong> “take” a jump depending on the state of the flags.</p>
+<p>There are four “conditions”:</p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Mnemonic</th><th>Description</th></tr></thead><tbody>
+<tr><td>Zero</td><td><code>z</code></td><td>Z is set (last operation had a result of 0)</td></tr>
+<tr><td>Non-zero</td><td><code>nz</code></td><td>Z is not set (last operation had a non-zero result)</td></tr>
+<tr><td>Carry</td><td><code>c</code></td><td>C is set (last operation overflowed)</td></tr>
+<tr><td>No carry</td><td><code>nc</code></td><td>C is not set (last operation did not overflow)</td></tr>
+</tbody></table>
+</div>
+<p>Thus, <code>jp nz, CopyTiles</code> can be read as “if the Z flag is not set, then jump to <code>CopyTiles</code>”.
+Since we’re jumping <em>backwards</em>, we will repeat the instructions again: we have just created a <strong>loop</strong>!</p>
+<p>Okay, we’ve been talking about the code a lot, and we have seen it run, but we haven’t really seen <em>how</em> it runs.
+Let’s watch the magic unfold in slow-motion in the next lesson!</p>
+<hr />
+<div class="footnote-definition" id="pc_updates"><sup class="footnote-definition-label">1</sup>
+<p>Not exactly; instructions may be several bytes long, and PC increments after reading each byte.
+Notably, this means that when an instruction finishes executing, PC is pointing to the following instruction.
+Still, it’s pretty much “where the CPU is currently reading from”, but it’s better to keep it simple and avoid mentioning instruction encoding for now.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tracing"><a class="header" href="#tracing">Tracing</a></h1>
+<p>Ever dreamed of being a wizard?
+Well, this won’t give you magical powers, but let’s see how emulators can be used to control time!</p>
+<p>First, make sure to focus the debugger window.
+Let’s first explain the debugger’s layout:
+<img src="part1/../assets/img/debugger.png" alt="" />
+Top-left is the code viewer, bottom-left is the data viewer, top-right are some registers (as we saw in <a href="part1/registers.html">the registers lesson</a>), and bottom-right is the stack viewer.
+What’s the stack?
+We will answer that question a bit later… in Part Ⅱ 😅</p>
+<h2 id="setup-1"><a class="header" href="#setup-1">Setup</a></h2>
+<p>For now, let’s focus on the code viewer.
+If you focus the debugger while the emulator is running, it will pause, as indicated by the screen window’s title changing to <code>bgb (debugging)</code>.</p>
+<p>Okay, but what’s with this weird syntax?
+Well, there are several syntaxes for Game Boy assembly, and BGB doesn’t use RGBDS’ by default.
+We can fix that in the options, which we can access by either:</p>
+<ul>
+<li>Right-clicking the screen and selecting “Options”</li>
+<li>In the debugger, open the “Window” menu, and select “Options”</li>
+<li>Press <kbd><kbd>F11</kbd></kbd> while focusing either the screen or debugger</li>
+</ul>
+<p>BGB has a <em>ton</em> of options, but don’t worry, it’s got good defaults, so we don’t need to look at most of them for now.
+Select the “Debug” tab, and set “Disasm syntax” to “rgbds”.
+Oh, and check the “Local symbols” box, too.
+Now, click “OK” to apply the options.</p>
+<p><img src="part1/../assets/img/options.png" alt="Screenshot of the options window" /></p>
+<div class="box warning">
+<p>You can also customize a lot of key bindings in the options, but I will stick to the default ones for this tutorial for the sake of simplicity.</p>
+</div>
+<p>Alright, great!
+But where are the labels?
+Well, as we have seen a couple of lessons ago, labels are merely a convenience provided by RGBASM, but they are not part of the ROM itself.
+It is very much inconvenient to debug without them, and so sym files (for “<strong>sym</strong>bols”) have been developed.
+Let’s run RGBLINK to generate a sym file for our ROM:</p>
+<pre><code><span class="console-line hljs-meta"></span><span class="language-bash">rgblink -n hello-world.sym hello-world.o</span>
+</code></pre>
+<div class="box warning decorated">
+<div><p>‼️</p></div>
+<div>
+<p>The file names matter!
+When looking for a ROM’s sym file, BGB takes the ROM’s file name, strips the extension (here, <code>.gb</code>), replaces it with <code>.sym</code>, and looks for a file <strong>in the same directory</strong> with that name.</p>
+</div>
+</div>
+<p>Then, in the debugger, we can go in the “File” menu and select “reload SYM file”.</p>
+<p><img src="part1/../assets/img/labels.png" alt="Screenshot of the debugger showing the labels in the code viewer" /></p>
+<p>Much better!</p>
+<div class="box tip decorated">
+<div><p>🔍</p></div>
+<div>
+<p>If a sym file is loaded, pressing <kbd><kbd>Tab</kbd></kbd> allows toggling whether labels are displayed or not.</p>
+</div>
+</div>
+<h2 id="stepping"><a class="header" href="#stepping">Stepping</a></h2>
+<p>When pausing execution, the debugger will automatically focus on the instruction the CPU is about to execute, as indicated by the line highlighted in blue.
+<img src="part1/../assets/img/pc.png" alt="Screenshot of the debugger showing that the highlighted line corresponds to PC" /></p>
+<div class="box tip decorated">
+<div><p>ℹ️</p></div>
+<div>
+<p>The instruction highlighted in blue is always what the CPU is <em>about to execute</em>, not what it <em>just executed</em>. Keep this in mind.</p>
+</div>
+</div>
+<p>If we want to watch execution from the beginning, we need to reset the emulator.
+Go into the debugger’s “Run” menu, and select “Reset”, or tap your numpad’s <kbd><kbd>*</kbd></kbd> key.</p>
+<p>The blue line should automatically move to address $0100<sup class="footnote-reference"><a href="#boot_addr">1</a></sup>, and now we’re ready to trace!
+All the commands for that are in the “Run” menu.</p>
+<ul>
+<li>“Run” simply unpauses the emulator. Clicking on the screen also does the same.</li>
+<li>“Trace” (more commonly known as “Step Into”) and “Step Over” advance the emulator by one instruction.
+They only really differ on the <code>call</code> instruction and interrupts, neither of which we are using here, so we will use “Trace”.</li>
+<li>The other options are not relevant for now.</li>
+</ul>
+<p>We will have to “Trace” a bunch of times, so it’s a good idea to use the key shortcut.
+If we press <kbd><kbd>F7</kbd></kbd> once, the <code>jp EntryPoint</code> is executed.
+And if we press it a few more times, can see the instructions being executed, one by one!</p>
+<video controls poster="../assets/vid/reset_trace.poster.png">
+  <source src="../assets/vid/reset_trace.webm" type="video/webm">
+  <source src="../assets/vid/reset_trace.mp4" type="video/mp4">
+<img src="part1/../assets/vid/reset_trace.gif" alt="Video demonstration in BGB">
+</video>
+<p>Now, you may notice the <code>WaitVBlank</code> loop runs a <em>lot</em> of times, but what we are interested in is the <code>CopyTiles</code> loop.
+We can easily skip over it in several ways; this time, we will use a <em>breakpoint</em>.
+We will place the breakpoint on the <code>ld de, Tiles</code> at <code>00:0162</code>; either double-click on that line, or select it and press <kbd><kbd>F2</kbd></kbd>.
+The line will turn red:</p>
+<p><img src="part1/../assets/img/breakpoint.png" alt="Debugger screenshot showcasing the breakpoint" /></p>
+<p>Then you can resume execution either by clicking the screen or pressing <kbd><kbd>F9</kbd></kbd>, and BGB will automatically pause.
+Whenever BGB is running, and the (emulated) CPU is about to execute an instruction a breakpoint was placed on, it automatically pauses.</p>
+<p><img src="part1/../assets/img/bkpt_pause.png" alt="Debugger screenshot showcasing execution paused on the breakpoint" /></p>
+<p>You can see where execution is being paused both from the green arrow and the value of PC.</p>
+<p>If we trace the next three instructions, we can see the three arguments to the <code>CopyTiles</code> loop getting loaded into registers.</p>
+<p><img src="part1/../assets/img/regs_copytiles.png" alt="The state of some registers at the beginning of the CopyTiles loop" /></p>
+<p>For fun, let’s watch the tiles as they’re being copied.
+For that, obviously, we will use the data viewer, and position it at the destination.
+As we can see from the image above, that would be $9000!</p>
+<p>Select the data viewer (either click somewhere in it, or use <kbd><kbd>Ctrl</kbd>+<kbd>Tab</kbd></kbd> to switch focus, as indicated by the grey bar on the left), and press Ctrl+G (for “Goto”).
+In the popup, type the address you wish to go to, in our case <code>9000</code> (sans dollar sign!!).</p>
+<video controls poster="../assets/vid/trace_copy.poster.png">
+  <source src="../assets/vid/trace_copy.webm" type="video/webm">
+  <source src="../assets/vid/trace_copy.mp4" type="video/mp4">
+<img src="part1/../assets/vid/trace_copy.gif" alt="Video demonstration in BGB">
+</video>
+<p>Awesome, right?</p>
+<h2 id="what-next"><a class="header" href="#what-next">What next?</a></h2>
+<p>Congrats, you have just learned how to use a debugger!
+We have only scratched the surface, though; we will use more of BGB’s tools to illustrate the next parts.
+Don’t worry, from here on, lessons will go with a lot more images—you’ve made it through the hardest part!</p>
+<hr />
+<div class="footnote-definition" id="boot_addr"><sup class="footnote-definition-label">1</sup>
+<p>Why does execution start at $0100?
+That’s because it’s where the <a href="https://gbdev.io/pandocs/Power_Up_Sequence">boot ROM</a> hands off control to our game once it’s done.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tiles"><a class="header" href="#tiles">Tiles</a></h1>
+<div class="box tip decorated">
+<div><p>💭</p></div>
+<div>
+<p>“Tiles” were called differently in documentation of yore.
+They were usually called “patterns” or “characters”, the latter giving birth to the “CHR” abbreviation which is sometimes used to refer to tiles.</p>
+<p>For example, on the NES, tile data is usually provided by the cartridge in either <a href="http://wiki.nesdev.com/w/index.php/CHR_ROM_vs._CHR_RAM">CHR ROM or CHR RAM</a>.
+The term “CHR” is typically not used on the Game Boy, though exchanges between communities cause terms to “leak”, so some refer to the area of VRAM where tiles are stored as “CHR RAM” or “CHR VRAM”, for example.</p>
+<p>As with all such jargon whose meaning may depend on who you are talking to, I will stick to “tiles” across this entire tutorial for consistency, being what is the most standard in the GB dev community now.</p>
+</div>
+</div>
+<p>Well, copying this data blindly is fine and dandy, but why exactly is the data “graphics”?</p>
+<figure>
+  <img src="part1/../assets/img/ah_yes_pixels.png" alt="Screenshot of some tile definitions in the code">
+  <figcaption><q>Ah, yes, pixels.</q></figcaption>
+</figure>
+<p>Let’s see about that!</p>
+<h2 id="helpful-hand"><a class="header" href="#helpful-hand">Helpful hand</a></h2>
+<p>Now, figuring out the format with an explanation alone is going to be very confusing; but fortunately, BGB got us covered thanks to its <em>VRAM viewer</em>.
+You can open it either by selecting “Window” then “VRAM viewer”, or pressing F5 when the debugger is in focus.
+It is also in “Other” in the screen’s right-click menu.</p>
+<p><img src="part1/../assets/img/vram_viewer.png" alt="Screenshot of the VRAM viewer’s “Tiles” tab" /></p>
+<p>By default, it should open on the “Tiles” tab like in the image, but if not, please select that.
+We will come to the other tabs in due time.
+This one shows the tiles present in the Game Boy’s video memory (or “<abbr title="Video RAM">VRAM</abbr>”).</p>
+<div class="box tip decorated">
+<div><p>🤔</p></div>
+<div>
+<p>I encourage you to experiment with the VRAM viewer, hover over things, tick and untick checkboxes, see by yourself what’s what. Any questions you might have will be answered in due time, don’t worry! And if what you’re seeing later on doesn’t match my screenshots, ensure that the checkboxes match mine.</p>
+</div>
+</div>
+<p>Don’t mind the “Nintendo” in the top-left; we did not put it there ourselves, and we will see why it’s there later.
+We will also be ignoring the right half of the tile grid, as it is exclusive to the Game Boy Color: we will get there when we get there.</p>
+<h2 id="short-primer"><a class="header" href="#short-primer">Short primer</a></h2>
+<p>You may have heard of tiles before, especially as they were really popular in 8-bit and 16-bit systems.
+That’s no coincidence: tiles are very useful.
+Instead of storing every on-screen pixel (144 × 160 pixels × 2 bits/pixel = 46080 bits = 5760 bytes, compared to the console’s 8192 bytes of VRAM), pixels are grouped into tiles, and then tiles are assembled in various ways to produce the final image.</p>
+<p>In particular, tiles can be reused very easily and at basically no cost, saving a lot of memory!
+In addition, manipulating whole tiles at once is much cheaper than manipulating the individual pixels, so this spares processing time as well.</p>
+<p>The concept of a “tile” is very general, but on the Game Boy, tiles are <em>always</em> 8 by 8 pixels.
+Often, hardware tiles are grouped to manipulate them as larger tiles (often 16×16); to avoid the confusion, those are referred to as <strong>meta-tiles</strong>.</p>
+<h3 id="bpp"><a class="header" href="#bpp">“bpp”?</a></h3>
+<p>You may be wondering where that “2 bits/pixel” figure earlier came from…
+This is something called “bit depth”.</p>
+<p>See, colors are <em>not</em> stored in the tiles themselves!
+Instead, it works like a coloring book: the tile itself contains 8 by 8 <em>indices</em>, not colors; you give the hardware a tile and a set of colors—a <strong>palette</strong>—and it colorizes them!
+(This is also why color swaps were very common back then: you could create enemy variations by storing tiny palettes instead of large different graphics.)</p>
+<p>Anyway, as it is, Game Boy palettes are 4 colors large.<sup class="footnote-reference"><a href="#pal_size">1</a></sup>
+This means that the indices into those palettes, stored in the tiles, can be represented in only <em>two bits</em>!
+This is called “2 bits per pixel”, noted “2bpp”.</p>
+<p>With that in mind, we are ready to explain how these bytes turn into pixels!</p>
+<h2 id="encoding"><a class="header" href="#encoding">Encoding</a></h2>
+<p>As I explained, each pixel takes up 2 bits.
+Since there are 8 bits in a byte, you might expect each byte to contain 4 pixels… and you would be neither entirely right, nor entirely wrong.
+See, each row of 8 pixels is stored in 2 bytes, but neither of these bytes contains the info for 4 pixels.
+(Think of it like a 10 € banknote torn in half: neither half is worth anything, but the full bill is worth, well, 10 €.)</p>
+<p>For each pixel, the least significant bit of its index is stored in the first byte, and the most significant bit is stored in the second byte.
+Since each byte is a collection of one of the bits for each pixel, it’s called a <strong>bitplane</strong>.</p>
+<p>The leftmost pixel is stored in the leftmost bit of both bytes, the pixel to its right in the second leftmost bit, and so on.
+The first pair of bytes stores the topmost row, the second byte the row below that, and so on.</p>
+<p>Here is a more visual demonstration; note that it’s for the SNES, but its 2BPP format is the same as the Game Boy’s.</p>
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/txkHN6izK2Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p>This encoding may seem a little weird at first, and it can be; it’s made to be more convenient for the hardware to decode, keeping the circuitry simple and low-power.
+It even makes a few cool tricks possible, as we will see (much) later!</p>
+<p>You can read up more about the encoding <a href="https://gbdev.io/pandocs/Tile_Data.html">in the Pan Docs</a> and <a href="https://www.huderlem.com/demos/gameboy2bpp.html">ShantyTown’s site</a>.</p>
+<p>In the next lesson, we shall see how colors are applied!</p>
+<hr />
+<div class="footnote-definition" id="pal_size"><sup class="footnote-definition-label">1</sup>
+<p>Other consoles can have varying bit depths; for example, the SNES has 2bpp, 4bpp, and 8bpp depending on the graphics mode and a few other parameters.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="palettes"><a class="header" href="#palettes">Palettes</a></h1>
+<p>In the previous lesson, I briefly mentioned that colors are applied to tiles via <em>palettes</em>, but we haven’t talked much about those yet.</p>
+<p>The black &amp; white Game Boy has three palettes, one for the background called <a href="https://gbdev.io/pandocs/Palettes.html#ff47---bgp-bg-palette-data-rw---non-cgb-mode-only"><code>BGP</code></a> (“BackGround Palette”), and two for the objects called <a href="https://gbdev.io/pandocs/Palettes.html#ff48---obp0-object-palette-0-data-rw---non-cgb-mode-only"><code>OBP0</code></a> and <a href="https://gbdev.io/pandocs/Palettes.html#ff48---obp1-object-palette-1-data-rw---non-cgb-mode-only"><code>OBP1</code></a> (“OBject Palette 0/1”).
+If you are wondering what “objects” are, you will have to wait until Part Ⅱ to find out; for now, let’s focus on the background.</p>
+<div class="box tip decorated">
+<div><p>🌈</p></div>
+<div>
+<p>The Game Boy Color introduced, obviously, colors, and this was mainly done by reworking the way palettes are handled.
+We will not talk about Game Boy Color features in Part Ⅰ for the sake of simplicity, but we will do so in later parts.</p>
+</div>
+</div>
+<p>Please select the “Palettes” tab of BGB’s VRAM viewer.</p>
+<p><img src="part1/../assets/img/pal_viewer.png" alt="Screenshot of the VRAM viewer’s Palette tab" /></p>
+<div class="box tip decorated">
+<div><p>🥴</p></div>
+<div>
+<p>The VRAM viewer’s layout may seem weird.
+As mentioned in the previous tip box, the Game Boy Color changed the way palettes work, and the Super Game Boy throws another wrench into the mix.</p>
+<p>The VRAM viewer uses the same layout for monochrome and Color, leading to this admittedly strange layout.</p>
+</div>
+</div>
+<p>We will be taking a look at the “BGP” line.
+As I explained before, tiles store “color indices” for each pixel, which are used to index into the palette.
+Color number 0<sup class="footnote-reference"><a href="#numbering_zero">1</a></sup> is the leftmost in that line, and number 3 is the rightmost.</p>
+<p>So, in our case, color number 0 is “white”, color number 1 is “light gray”, number 2 is “dark gray”, and number 3 “black”.
+I put air quotes because “black” isn’t true black, and “white” isn’t true white.
+Further, note that the original Game Boy had shades of green, but the later Game Boy Pocket’s screen produced shades of gray instead.
+And, even better, the Game Boy Color will automatically colorize games that lack Game Boy Color support!</p>
+<p><img src="part1/../assets/img/hello_world_autocolor.png" alt="Screenshot of our Hello World, automatically colorized by the Game Boy Color" /></p>
+<p>All this to say, one shouldn’t expect specific colors out of a Game Boy game<sup class="footnote-reference"><a href="#console_detection">2</a></sup>, just four more or less bright colors.</p>
+<h2 id="getting-our-hands-dirty"><a class="header" href="#getting-our-hands-dirty">Getting our hands dirty</a></h2>
+<p>Well, so far in this tutorial, besides running the Hello World, we have been pretty passive, watching it unfold.
+What do you say we start prodding the ROM a bit?</p>
+<p>In BGB’s debugger, select the “Window” menu, and open the “IO map” (or just press <kbd><kbd>F10</kbd></kbd> within the debugger).</p>
+<p><img src="part1/../assets/img/io_map.png" alt="Screenshot of the IO map" /></p>
+<p>While the VRAM viewer offers a visual representation of the palette, the IO map shows the nitty-gritty: how it’s encoded.
+The IO map also lets us modify BGP easily; but to do so, we need to understand <em>how</em> values we write are turned into colors.</p>
+<h3 id="encoding-1"><a class="header" href="#encoding-1">Encoding</a></h3>
+<p>Fortunately, the encoding is very simple.
+I will explain it, and at the same time, give an example with the palette we have at hand, $E4.</p>
+<p>Take the byte, break its 8 bits into 4 groups of 2.</p>
+<pre><code>[BGP] = $E4
+$E4 = %11100100 (refresh your memory in the &quot;Binary and hexadecimal&quot; lesson if needed!)
+That gets broken down into %11, %10, %01, %00
+</code></pre>
+<p>Color number 0 is the rightmost “group”, color number 3 is the leftmost one.
+Simple!
+And this matches what the VRAM viewer is showing us: color number 0, the rightmost, is the brightest (%00), up to color number 3, the leftmost and the darkest (%11).</p>
+<h3 id="lights-out"><a class="header" href="#lights-out">Lights out</a></h3>
+<p>For fun, let’s make the screen completely black.
+We can easily do this by setting all colors in the palette to black (%11).
+This would be <code>%11 %11 %11 %11 = $FF</code>.</p>
+<p>In the IO map, click the text box left of “BGP”, erase the “E4”, type “FF”, and hit Enter.
+BGP immediately updates, turning the screen black!</p>
+<figure>
+	<img src="part1/../assets/img/pal_viewer_black.png" alt="Screenshot of the palette viewer with the BGP line entirely black">
+	<figcaption>Observe how the BGP line is entirely black now. Also, I could have shown a screenshot of the black screen, but that would have been silly.</figcaption>
+</figure>
+<p>What if we wanted to take the original palette, but invert it?
+%11 would become %00, %01 would become %10, %10 would become %01, and %00 would become %11.
+We would get thus:</p>
+<pre><code>%11_10_01_00
+ ↓  ↓  ↓  ↓
+%00_01_10_11
+</code></pre>
+<p>(I’m not giving the value in hexadecimal, use this as an opportunity to exercise your bin-to-hex conversions!)</p>
+<figure>
+	<img src="part1/../assets/img/hello_world_inv.png" alt="Screenshot of the color-inverted Hello World">
+	<figcaption>If you got it right, it should look like this!</figcaption>
+</figure>
+<p>If you go to the Tile Viewer and uncheck the “show paletted” checkbox, you will notice that the tile data stays the same regardless of how the palette is modified!
+This is an advantage of using palettes: fading the screen in and out is very cheap, just modifying a single byte, instead of having to update every single on-screen pixel.</p>
+<p>Got all that?
+Then let’s take a look at the last missing puzzle piece in the Hello World’s rendering process, the <strong>tilemap</strong>!</p>
+<hr />
+<div class="footnote-definition" id="numbering_zero"><sup class="footnote-definition-label">1</sup>
+<p>Numbering often starts at 0 when working with computers.
+We will understand why later, but for now, please bear with it!</p>
+</div>
+<div class="footnote-definition" id="console_detection"><sup class="footnote-definition-label">2</sup>
+<p>Well, it is possible to detect these different models and account for them, but this would require taking plenty of corner cases into consideration, so it’s probably not worth the effort.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tilemap"><a class="header" href="#tilemap">Tilemap</a></h1>
+<div class="box tip decorated">
+<div><p>🧐</p></div>
+<div>
+<p>Some spell them “tile map”, some “tilemap”.
+I will be using the latter by preference, but I also stay consistent with it in the code (<code>Tilemap</code> and not <code>TileMap</code>), as well as later when we will talk about attribute maps (“attrmap” and <code>Attrmap</code> instead of <code>AttrMap</code>).</p>
+</div>
+</div>
+<p>We are <em>almost</em> there.
+We have seen how graphics on the Game Boy are composed of 8×8 “tiles”, and we have seen how color is added into the mix.</p>
+<p>But we have not seen yet how those tiles are arranged into a final picture!</p>
+<p>Tiles are basically a grid of pixels; well, the tilemaps are basically a grid of tiles!
+To allow for cheap reuse, tiles aren’t stored in the tilemap directly; instead, tiles are referred to by an <em>ID</em>, which you can see in BGB’s VRAM viewer.</p>
+<figure>
+  <img src="part1/../assets/img/tile_id.png" alt="Screenshot highlighting where a tile's ID can be seen">
+  <figcaption>
+    The ID is displayed in hexadecimal without a prefix, so this is tile number $10, aka 16.
+    As you may have noticed, the tiles are displayed in rows of 16, so it's easier to locate them by hexadecimal ID.
+    Nifty!
+  </figcaption>
+</figure>
+<p>Now, of course, tile IDs are numbers, like everything that computers deal with.
+IDs are stored in bytes, so there are 256 possible tile IDs.
+However, the astute reader will have noticed that there are 384 tiles in total<sup class="footnote-reference"><a href="#tile_blocks">1</a></sup>!
+By virtue of the <a href="https://en.wikipedia.org/wiki/Pigeonhole_principle">pigeonhole principle</a>, this means that some IDs refer to several tiles at the same time.</p>
+<p>Indeed, BGB reports that the first 128 tiles have the same IDs as the last 128.
+There exists a mechanism to select whether IDs 0–127 reference the first or last 128 tiles, but for simplicity’s sake, we will overlook this for now, so please ignore the first (topmost) 128 tiles for the time being.</p>
+<p>Now, please turn your attention to the “BG map” tab of BGB’s VRAM viewer, pictured below.</p>
+<p><img src="part1/../assets/img/tilemap_viewer.png" alt="Screenshot of the tilemap viewer" /></p>
+<div class="box tip">
+<p>You may notice that the image shown is larger than what is displayed on-screen.
+Only part of the tilemap, outlined by a thicker border in the VRAM viewer, is displayed on-screen at a given time.
+We will explain this in more detail in Part Ⅱ.</p>
+</div>
+<p>Here we will be able to see the power of tile reuse in full force.
+As a convenience and a refresher, here are the tiles our Hello World loads into VRAM:</p>
+<p><img src="part1/../assets/img/hello_world_tiles.png" alt="Enlarged view of the tiles loaded in VRAM" /></p>
+<p>You can see that we only loaded a single “blank” tile ($00, the first aka. top-left one), but it can be repeated to cover the whole background at no extra cost!</p>
+<p>Repetition can be more subtle: for example, tile $01 is used for the top-left corner of the H, E, L, L, and W (red lines below)!
+The R, L, and D also both share their top-left tile ($2D, blue lines below); and so on.
+You can confirm this by hovering over tiles in the BG map tab, which shows the ID of the tile at that position.</p>
+<figure>
+  <img src="part1/../assets/img/hello_world_mappings.svg" alt="Diagram of some tile mappings">
+  <figcaption>
+    Here are some examples of tile reuse. Not everything is drawn, as it would become a mess.
+  </figcaption>
+</figure>
+<p>All in all, we can surmise that displaying graphics on the Game Boy consists of loading “patterns” (the tiles), and then telling the console which tile to display for each given location.</p>
+<hr />
+<div class="footnote-definition" id="tile_blocks"><sup class="footnote-definition-label">1</sup>
+<p>The even more astute (astuter?) reader will have noticed that 384 = 3 × 128.
+Thus, tiles are often conceptually grouped into three “blocks” of 128 tiles each, which BGB shows as separated by thicker horizontal lines.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="wrapping-up"><a class="header" href="#wrapping-up">Wrapping up</a></h1>
+<p>Congrats!
+You have made it through the first part of this tutorial.
+By this point, you have a basic enough understanding of the console that you know how to display a picture.
+And hey, that doesn’t sound like much, but consider everything you have seen so far—there <em>is</em> a lot that goes into it!</p>
+<div class="box tip decorated">
+<div><p>🥳</p></div>
+<div>
+<p>Honestly, congrats on coming this far—many people have given up earlier than this.
+So you can give yourself a pat on the back, you honestly deserve it!
+<strong>Now may also be a good time to take a break</strong> if you are reading all this in a single trait.
+I encourage you to give it a little time to sink in, and maybe go back to the lessons you struggled on the most.
+Maybe a second read can help.</p>
+</div>
+</div>
+<hr />
+<p>And yes, you could simply have let a library handle all that.
+However, the details always leak through eventually, so knowing about them is helpful, if only for debugging.</p>
+<p>Plus, understanding what’s really going on under the hood makes you a better programmer, even if you don’t end up using ASM in the long run.
+Amusingly, even modern systems work similarly to older ones in unexpected places, so some things you just learned will carry over!
+Trust me, everything you have learned and will learn is worth it! ✊</p>
+<p>That said, right now, you may have a lot of questions.</p>
+<ul>
+<li>Why do we turn off the LCD?</li>
+<li>We know how to make a static picture, but how to we add motion into the mix?</li>
+<li>Also, how do I get input from the player?</li>
+<li>The code mentions shutting down audio, but how do I play some of those famed beeps and bloops?</li>
+<li>Writing graphics in that way sound tedious, is there no other way?</li>
+<li>Actually, wait, how do we make a game out of all this??</li>
+</ul>
+<p>… All of that answered, and more, in Part Ⅱ! 👀</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started"><a class="header" href="#getting-started">Getting started</a></h1>
+<p>In this lesson, we will start a new project from scratch.
+We will make a <a href="https://en.wikipedia.org/wiki/Breakout_%28video_game%29">Breakout</a> / <a href="https://en.wikipedia.org/wiki/Arkanoid">Arkanoid</a> clone, which we’ll call “Unbricked”!
+(Though you are free to give it any other name you like, as it will be <em>your</em> project.)</p>
+<p>Open a terminal and make a new directory (<code>mkdir unbricked</code>), and then enter it (<code>cd unbricked</code>), just like you did for <a href="part2/../part1/hello_world.html">“Hello, world!”</a>.</p>
+<p>Start by creating a file called <code>main.asm</code>, and include <code>hardware.inc</code> in your code.</p>
+<pre><code class="language-rgbasm linenos start=1">{{#include ../../unbricked/getting-started/main.asm:includes}}
+</code></pre>
+<p>You may be wondering what purpose <code>hardware.inc</code> serves.
+Well, the code we write only really affects the CPU, but does not do anything with the rest of the console (not directly, anyway).
+To interact with other components (like the graphics system, say), <a href="https://en.wikipedia.org/wiki/Memory-mapped_I/O">Memory-Mapped <abbr title="Input/Output">I/O</abbr></a> (MMIO) is used: basically, <a href="part2/../part1/memory.html">memory</a> in a certain range (addresses $FF00–FF7F) does special things when accessed.</p>
+<p>These bytes of memory being interfaces to the hardware, they are called <em>hardware registers</em> (not to be mistaken with <a href="part2/../part1/registers.html">the CPU registers</a>).
+For example, the “PPU status” register is located at address $FF41.
+Reading from that address reports various bits of info regarding the graphics system, and writing to it allows changing some parameters.
+But, having to remember all the numbers (<a href="https://gbdev.io/pandocs/Power_Up_Sequence.html#hardware-registers">non-exhaustive list</a>) would be very tedious—and this is where <code>hardware.inc</code> comes into play!
+<code>hardware.inc</code> defines one constant for each of these registers (for example, <code>rSTAT</code> for the aforementioned “PPU status” register), plus some additional constants for values read from or written to these registers.</p>
+<div class="box tip">
+<p>Don’t worry if this flew over your head, we’ll see an example below with <code>rLCDC</code> and <code>LCDCF_ON</code>.</p>
+<p>By the way, the <code>r</code> stands for “register”, and the <code>F</code> in <code>LCDCF</code> stands for “flag”.</p>
+</div>
+<p>Next, make room for the header.
+<a href="part2/../part1/header.html">Remember from Part Ⅰ</a> that the header is where some information that the Game Boy relies on is stored, so you don’t want to accidentally leave it out.</p>
+<pre><code class="language-rgbasm linenos start=3">{{#include ../../unbricked/getting-started/main.asm:header}}
+</code></pre>
+<p>The header jumps to <code>EntryPoint</code>, so let’s write that now:</p>
+<pre><code class="language-rgbasm linenos start=9">{{#include ../../unbricked/getting-started/main.asm:entry}}
+</code></pre>
+<p>The next few lines wait until “VBlank”, which is the only time you can safely turn off the screen (doing so at the wrong time could damage a real Game Boy, so this is very crucial).
+We’ll explain what VBlank is and talk about it more later in the tutorial.</p>
+<p>Turning off the screen is important because loading new tiles while the screen is on is tricky—we’ll touch on how to do that in Part 3.</p>
+<p>Speaking of tiles, we’re going to load some into VRAM next, using the following code:</p>
+<pre><code class="language-rgbasm linenos start=20">{{#include ../../unbricked/getting-started/main.asm:copy_tiles}}
+</code></pre>
+<p>This loop might be <a href="part2/../part1/jumps.html#conditional-jumps">reminiscent of part Ⅰ</a>.
+It copies starting at <code>Tiles</code> to <code>$9000</code> onwards, which is the part of VRAM where our <a href="part2/../part1/tiles.html">tiles</a> are going to be stored.
+Recall that <code>$9000</code> is where the data of background tile $00 lies, and the data of subsequent tiles follows right after.
+To get the number of bytes to copy, we will do just like in Part Ⅰ: using another label at the end, called <code>TilesEnd</code>, the difference between it (= the address after the last byte of tile data) and <code>Tiles</code> (= the address of the first byte) will be exactly that length.</p>
+<p>That said, we haven’t written <code>Tiles</code> nor any of the related data yet.
+We’ll get to that later!</p>
+<p>Almost done now—next, write another loop, this time for copying <a href="part2/../part1/tilemap.html">the tilemap</a>.</p>
+<pre><code class="language-rgbasm linenos start=33">{{#include ../../unbricked/getting-started/main.asm:copy_map}}
+</code></pre>
+<p>Note that while this loop’s body is exactly the same as <code>CopyTiles</code>’s, the 3 values loaded into <code>de</code>, <code>hl</code>, and <code>bc</code> are different.
+These determine the source, destination, and size of the copy, respectively.</p>
+<div class="box tip">
+<p class="box-title">“<a href="https://en.wikipedia.org/wiki/Don&#x27;t_Repeat_Yourself"><abbr title="Don't Repeat Yourself">DRY</abbr></a>”</p><p>If you think that this is super redundant, you are not wrong, and we will see later how to write actual, reusable <em>functions</em>.
+But there is more to them than meets the eye, so we will start tackling them much later.</p>
+</div>
+<p>Finally, let’s turn the screen back on, and set a <a href="part2/../part1/palettes.html">background palette</a>.
+Rather than writing the non-descript number <code>%10000001</code> (or $81 or 129, to taste), we make use of two constants graciously provided by <code>hardware.inc</code>: <code>LCDCF_ON</code> and <code>LCDCF_BGON</code>.
+When written to <a href="https://gbdev.io/pandocs/LCDC"><code>rLCDC</code></a>, the former causes the PPU and screen to turn back on, and the latter enables the background to be drawn.
+(There are other elements that could be drawn, but we are not enabling them yet.)
+Combining these constants must be done using <code>|</code>, the <em>binary “or”</em> operator; we’ll see why later.</p>
+<pre><code class="language-rgbasm linenos start=46">{{#include ../../unbricked/getting-started/main.asm:end}}
+</code></pre>
+<p>There’s one last thing we need before we can build the ROM, and that’s the graphics.
+We will draw the following screen:</p>
+<p><img src="part2/../assets/part2/img/tilemap.png" alt="Layout of unbricked" /></p>
+<p>In <code>hello-world.asm</code>, tile data had been written out by hand in hexadecimal; this was to let you see how the sausage is made at the lowest level, but <em>boy</em> is it impractical to write!
+This time, we will employ a more friendly way, which will let us write each row of pixels more easily.
+For each row of pixels, instead of writing <a href="part2/../part1/tiles.html#encoding">the bitplanes</a> directly, we will use a backtick (<code>`</code>) followed by 8 characters.
+Each character defines a single pixel, intuitively from left to right; it must be one of 0, 1, 2, and 3, representing the corresponding color index in <a href="part2/../part1/palettes.html">the palette</a>.</p>
+<div class="box tip">
+<p>If the character selection isn’t to your liking, you can use <a href="https://rgbds.gbdev.io/docs/v0.5.2/rgbasm.1#g">RGBASM’s <code>-g</code> option</a> or <a href="https://rgbds.gbdev.io/docs/v0.5.2/rgbasm.5/#Changing_options_while_assembling"><code>OPT g</code></a> to pick others.
+For example, <code>rgbasm -g '.xXO' (...)</code> or <code>OPT g.xXO</code> would swap the four characters to <code>.</code>, <code>x</code>, <code>X</code>, and <code>O</code> respectively.</p>
+</div>
+<p>For example:</p>
+<pre><code class="language-rgbasm">	dw `01230123 ; This is equivalent to `db $55,$33`
+</code></pre>
+<p>You may have noticed that we are using <code>dw</code> instead of <code>db</code>; the difference between these two will be explained later.
+We already have tiles made for this project, so you can copy <a href="https://github.com/ISSOtm/gb-asm-tutorial/raw/master/unbricked/getting-started/tileset.asm">this premade file</a>, and paste it at the end of your code.</p>
+<p>Then copy the tilemap from <a href="https://github.com/ISSOtm/gb-asm-tutorial/raw/master/unbricked/getting-started/tilemap.asm">this file</a>, and paste it after the <code>TilesEnd</code> label.</p>
+<p>You can build the ROM now, by running the following commands in your terminal:</p>
+<pre><code><span class="console-line hljs-meta"></span><span class="language-bash">rgbasm -L -o main.o main.asm</span>
+<span class="console-line hljs-meta"></span><span class="language-bash">rgblink -o unbricked.gb main.o</span>
+<span class="console-line hljs-meta"></span><span class="language-bash">rgbfix -v -p 0xFF unbricked.gb</span>
+</code></pre>
+<p>If you run this in your emulator, you should see the following:</p>
+<p><img src="part2/../assets/part2/img/screenshot.png" alt="Screenshot of our game" /></p>
+<p>That white square seems to be missing!
+You may have noticed this comment earlier, somewhere in the tile data:</p>
+<pre><code class="language-rgbasm linenos start=135">{{#include ../../unbricked/getting-started/main.asm:custom_logo}}
+</code></pre>
+<p>The logo tiles were left intentionally blank so that you can choose your own.
+You can use one of the following pre-made logos, or try coming up with your own!</p>
+<ul>
+<li>
+<p><strong>RGBDS Logo</strong></p>
+<p><img src="part2/../assets/part2/img/rgbds.png" alt="The RGBDS Logo" /></p>
+<p><a href="https://github.com/ISSOtm/gb-asm-tutorial/raw/master/unbricked/getting-started/rgbds.asm">Source</a></p>
+</li>
+<li>
+<p><strong>Duck</strong></p>
+<p><img src="part2/../assets/part2/img/duck.png" alt="A pixel-art duck" /></p>
+<p><a href="https://github.com/ISSOtm/gb-asm-tutorial/raw/master/unbricked/getting-started/duck.asm">Source</a></p>
+</li>
+<li>
+<p><strong>Tail</strong></p>
+<p><img src="part2/../assets/part2/img/tail.png" alt="A silhouette of a tail" /></p>
+<p><a href="https://github.com/ISSOtm/gb-asm-tutorial/raw/master/unbricked/getting-started/tail.asm">Source</a></p>
+</li>
+</ul>
+<p>Add your chosen logo’s data (click one of the “Source” links above) after the comment, build the game again, and you should see your logo of choice in the bottom-right!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="objects"><a class="header" href="#objects">Objects</a></h1>
+<p>The background is very useful when the whole screen should move at once, but this is not ideal for everything.
+For example, a cursor in a menu, NPCs and the player in a RPG, bullets in a shmup, or balls in an <em>Arkanoid</em> clone… all need to move independently of the background.
+Thankfully, the Game Boy has a feature that’s perfect for these!
+In this lesson, we will talk about <em>objects</em> (sometimes called “OBJ”).</p>
+<div class="box tip">
+<p>The above description may have made you think of the term “sprite” instead of “object”.
+The term “sprite” has a <em>lot</em> of meanings depending on context, so, to avoid confusion, this tutorial tries to use specific alternatives instead, such as <em>object</em>, <em>metasprite</em>, <em>actor</em>, etc.</p>
+</div>
+<p>Each object allows drawing one or two tiles (so 8×8 or 8×16 pixels, respectively) at any on-screen position—unlike the background, where all the tiles are drawn in a grid.
+Therefore, an object consists of its on-screen position, a tile ID (like <a href="part2/../part1/tilemap.html">with the tilemap</a>), and some extra properties called “attributes”.
+These extra properties allow, for example, to display the tile flipped.
+We’ll see more about them later.</p>
+<p>Just like how the tilemap is stored in VRAM, objects live in a region of memory called OAM, meaning <strong>Object Attribute Memory</strong>.
+Recall from above that an object consists of:</p>
+<ul>
+<li>Its on-screen position</li>
+<li>A tile ID</li>
+<li>The “attributes”</li>
+</ul>
+<p>These are stored in 4 bytes: one for the Y coordinate, one for the X coordinate, one for the tile ID, and one for the attributes.
+OAM is 160 bytes long, and since 160 ∕ 4 = 40, the Game Boy stores a total of <strong>40</strong> objects at any given time.</p>
+<p>There is a catch, though: an object’s Y and X coordinate bytes in OAM do <em>not</em> store its on-screen position!
+Instead, the <em>on-screen</em> X position is the <em>stored</em> X position <strong>minus 8</strong>, and the <em>on-screen</em> Y position is the <em>stored</em> Y position <strong>minus 16</strong>.
+To stop displaying an object, we can simply put it off-screen, e.g. by setting its Y position to 0.</p>
+<div class="box tip">
+<p>These offsets are not arbitrary!
+Consider an object’s maximum size: 8 by 16 pixels.
+These offsets allow objects to be clipped by the left and top edges of the screen.
+The NES, for example, lacks such offsets, so you will notice that objects always disappear after hitting the left or top edge of the screen.</p>
+</div>
+<p>Let’s discover objects by experimenting with them!</p>
+<p>First off, when the Game Boy is powered on, OAM is filled with a bunch of semi-random values, which may cover the screen with some random garbage.
+Let’s fix that by first clearing OAM before enabling objects for the first time.
+Let’s add the following just after the <code>CopyTilemap</code> loop:</p>
+<pre><code class="language-rgbasm">{{#include ../../unbricked/objects/main.asm:clear-oam}}
+</code></pre>
+<p>This is a good time to do that, since just like VRAM, the screen must be off to safely access OAM.</p>
+<p>Once OAM is clear, we can draw an object by writing its properties.</p>
+<pre><code class="language-rgbasm linenos start=67">{{#include ../../unbricked/objects/main.asm:init-object}}
+</code></pre>
+<p>Remember that each object in OAM is 4 bytes, in the order Y, X, Tile ID, Attributes.
+So, the object’s top-left pixel lies 128 pixels from the top of the screen, and 16 from its left.
+The tile ID and attributes are both set to 0.</p>
+<p>You may remember from the previous lesson that we’re already using tile ID 0, as it’s the start of our background’s graphics.
+However, by default objects and backgrounds use a different set of tiles, at least for the first 128 IDs.
+Tiles with IDs 128–255 are shared by both, which is useful if you have a tile that’s used both on the background and by an object.</p>
+<p>If you press F5 in BGB to open the VRAM viewer, you should see three distinct sections.</p>
+<p><img src="https://user-images.githubusercontent.com/14899090/196176886-8ede7369-c172-45fa-9128-cc238c15b1e8.png" alt="image" /></p>
+<p>Because we need to load this to a different area, we’ll use the address $8000 and load a graphic for our game’s paddle.
+Let’s do so right after <code>CopyTilemap</code>:</p>
+<pre><code class="language-rgbasm linenos start=46">{{#include ../../unbricked/objects/main.asm:copy-paddle}}
+</code></pre>
+<p>And don’t forget to add <code>Paddle</code> to the bottom of your code.</p>
+<pre><code class="language-rgbasm">{{#include ../../unbricked/objects/main.asm:paddle-gfx}}
+</code></pre>
+<p>Finally, let’s enable objects and see the result.
+Objects must be enabled by the familiar <code>rLCDC</code> register, otherwise they just don’t show up.
+(This is why we didn’t have to clear OAM in the previous lessons.)
+We will also need to initialize one of the object palettes, <code>rOBP0</code>.
+There are actually two object palettes, but we’re only going to use one.</p>
+<pre><code class="language-rgbasm linenos start=76">{{#include ../../unbricked/objects/main.asm:enable-oam}}
+</code></pre>
+<h2 id="movement"><a class="header" href="#movement">Movement</a></h2>
+<p>Now that you have an object on the screen, let’s move it around.
+Previously, the <code>Done</code> loop did nothing; let’s rename it to <code>Main</code> and use it to move our object.
+We’re going to wait for VBlank before changing OAM, just like we did before turning off the screen.</p>
+<pre><code class="language-rgbasm linenos start=89">Main:
+    ; Wait until it's *not* VBlank
+    ld a, [rLY]
+    cp 144
+    jp nc, Main
+WaitVBlank2:
+	ld a, [rLY]
+	cp 144
+	jp c, WaitVBlank2
+
+	; Move the paddle one pixel to the right.
+	ld a, [_OAMRAM + 1]
+	inc a
+	ld [_OAMRAM + 1], a
+	jp Main
+</code></pre>
+<div class="box tip decorated">
+<div><p>🤨</p></div>
+<div>
+<p>Here, we are accessing OAM without turning the LCD off, but it’s still safe.
+Explaining why requires a more thorough explanation of the Game Boy’s rendering, so let’s ignore it for now.</p>
+</div>
+</div>
+<p>Now you should see the paddle moving… very quickly.
+Because it moves by a pixel ever frame, it’s going at a speed of 60 pixels per second!
+To slow this down, we’ll use a <em>variable</em>.</p>
+<p>So far, we have only worked with the CPU registers, but you can create global variables too!
+To do this, let’s create another section, but putting it in <code>WRAM0</code> instead of <code>ROM0</code>.
+Unlike ROM (“Read-Only Memory”), RAM (“Random-Access Memory”) can be written to; thus, WRAM, or Work RAM, is where we can store our game’s variables.</p>
+<p>Add this to the bottom of your file:</p>
+<pre><code class="language-rgbasm linenos start=358">{{#include ../../unbricked/objects/main.asm:variables}}
+</code></pre>
+<p>Now we’ll use the <code>wFrameCounter</code> variable to count how many frames have passed since we last moved the paddle.
+Every 10th frame, we’ll move the paddle by one pixel, slowing it down to 6 pixels per second.
+Don’t forget that RAM is filled with garbage values when the Game Boy starts, so we need to initialize our variables before first using them.</p>
+<pre><code class="language-rgbasm linenos start=86">{{#include ../../unbricked/objects/main.asm:main-loop}}
+</code></pre>
+<p>Alright!
+Up next is us taking control of that little paddle.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
+<p>So far, we have only written a single “flow” of code, but we can already spot some snippets that look redundant.
+Let’s use <strong>functions</strong> to “factor out” code!</p>
+<p>For example, in three places, we are copying chunks of memory around.
+Let’s write a function below the <code>jp Main</code>, and let’s call it <code>Memcpy</code>, like <a href="https://man7.org/linux/man-pages/man3/memcpy.3.html">the similar C function</a>:</p>
+<pre><code class="language-rgbasm linenos start=93">{{#include ../../unbricked/functions/main.asm:memcpy}}
+</code></pre>
+<p>The new <code>ret</code> instruction should immediately catch our eye.
+It is, unsurprisingly, what makes execution <em>return</em> to where the function was <em>called</em> from.
+Importantly, many languages have a definite “end” to a function: in C or Rust, that’s the closing brace <code>}</code>; in Pascal or Lua, the keyword <code>end</code>, and so on; the function implicitly returns when execution reaches its end.
+However, <strong>this is not the case in assembly</strong>, so you must remember to add a <code>ret</code> instruction at the end of the function to return from it!
+Otherwise, the results are unpredictable.</p>
+<p>Notice the comment above the function, explaining which registers it takes as input.
+This comment is important so that you know how to interface with the function; assembly has no formal parameters, so comments explaining them are even more important than with other languages.
+We’ll see more of those as we progress.</p>
+<p>There are three places in the initialization code where we can use the <code>Memcpy</code> function.
+Find each of these copy loops and replace them with a call to <code>Memcpy</code>; for this, we use the <code>call</code> instruction.
+The registers serve as parameters to the function, so we’ll leave them as-is.</p>
+<div class="table-wrapper"><table><thead><tr><th>Before</th><th>After</th></tr></thead><tbody><tr><td>
+<pre><code class="language-rgbasm linenos start=20">{{#include ../../unbricked/getting-started/main.asm:copy_tiles}}
+</code></pre>
+</td><td>
+<pre><code class="language-rgbasm linenos start=20">{{#include ../../unbricked/functions/main.asm:copy_tiles}}
+</code></pre>
+</td></tr><tr><td>
+<pre><code class="language-rgbasm linenos start=33">{{#include ../../unbricked/getting-started/main.asm:copy_map}}
+</code></pre>
+</td><td>
+<pre><code class="language-rgbasm linenos start=26">{{#include ../../unbricked/functions/main.asm:copy_map}}
+</code></pre>
+</td></tr><tr><td>
+<pre><code class="language-rgbasm linenos start=46">{{#include ../../unbricked/objects/main.asm:copy-paddle}}
+</code></pre>
+</td><td>
+<pre><code class="language-rgbasm linenos start=32">{{#include ../../unbricked/functions/main.asm:copy_paddle}}
+</code></pre>
+</td></tr></tbody></table></div>
+<p>In the next chapter, we’ll write another function, this time to read player input.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="input"><a class="header" href="#input">Input</a></h1>
+<p>We have the building blocks of a game here, but we’re still lacking player input.
+A game that plays itself isn’t very much fun, so let’s fix that.</p>
+<p>Paste this code below your <code>Main</code> loop.
+Like <code>Memcpy</code>, this is a function that can be reused from different places, using the <code>call</code> instruction.</p>
+<pre><code class="language-rgbasm linenos start=110">{{#include ../../unbricked/input/main.asm:input-routine}}
+</code></pre>
+<p>Unfortunately, reading input on the Game Boy is fairly involved (as you can see!), and it would be quite difficult to explain what this function does right now.
+So, I ask that you make an exception, and trust me that this function <em>does</em> read input.
+Alright? Good!</p>
+<p>Now that we know how to use functions, let’s call the <code>UpdateKeys</code> function in our main loop to read user input.
+<code>UpdateKeys</code> writes the held buttons to a location in memory that we called <code>wCurKeys</code>, which we can read from after the function returns.
+Because of this, we only need to call <code>UpdateKeys</code> once per frame.</p>
+<p>This is important, because not only is it faster to reload the inputs that we’ve already processed, but it also means that we will always act on the same inputs, even if the player presses or releases a button mid-frame.</p>
+<p>First, let’s set aside some room for the two variables that <code>UpdateKeys</code> will use; paste this at the end of the <code>main.asm</code>:</p>
+<pre><code class="language-rgbasm linenos start=407">{{#include ../../unbricked/input/main.asm:vars}}
+</code></pre>
+<p>Each variable must reside in RAM, and not ROM, because ROM is “Read-Only” (so you can’t modify it).
+Additionally, each variable only needs to be one byte large, so we use <code>db</code> (“Define Byte”) to reserve one byte of RAM for each.</p>
+<p>We’re going to use the <code>and</code> opcode, which we can use to set the zero flag (<code>z</code>) to the value of the bit.
+We can use this along with the <code>PADF</code> constants in hardware.inc to read a particular key.</p>
+<pre><code class="language-rgbasm linenos start=68">{{#include ../../unbricked/input/main.asm:main}}
+</code></pre>
+<p>Now, if you compile the project, you should be able to move the paddle left and right using the d-pad!!
+Hooray, we have the beginnings of a game!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="collision"><a class="header" href="#collision">Collision</a></h1>
+<p>Being able to move around is great, but there’s still one object we need for this game: a ball!
+Just like with the paddle, the first step is to create a tile for the ball and load it into VRAM.</p>
+<h2 id="graphics"><a class="header" href="#graphics">Graphics</a></h2>
+<p>Add this to the bottom of your file along with the other graphics:</p>
+<pre><code class="language-rgbasm linenos start=570">{{#include ../../unbricked/collision/main.asm:ball-sprite}}
+</code></pre>
+<p>Now copy it to VRAM somewhere in your initialization code, e.g. after copying the paddle’s tile.</p>
+<pre><code class="language-rgbasm linenos start=38">{{#include ../../unbricked/collision/main.asm:ball-copy}}
+</code></pre>
+<p>In addition, we need to initialize an entry in OAM, following the code that initializes the paddle.</p>
+<pre><code class="language-rgbasm linenos start=52">{{#include ../../unbricked/collision/main.asm:oam}}
+</code></pre>
+<p>As the ball bounces around the screen its momentum will change, sending it in different directions.
+Let’s create two new variables to track the ball’s momentum in each axis: <code>wBallMomentumX</code> and <code>wBallMomentumY</code>.</p>
+<pre><code class="language-rgbasm linenos start=581">{{#include ../../unbricked/collision/main.asm:ram}}
+</code></pre>
+<p>We will need to initialize these before entering the game loop, so let’s do so right after we write the ball to OAM.
+By setting the X momentum to 1, and the Y momentum to -1, the ball will start out by going up and to the right.</p>
+<pre><code class="language-rgbasm linenos start=61">{{#include ../../unbricked/collision/main.asm:init}}
+</code></pre>
+<h2 id="prep-work"><a class="header" href="#prep-work">Prep work</a></h2>
+<p>Now for the fun part!
+Add a bit of code at the beginning of your main loop that adds the momentum to the OAM positions.
+Notice that since this is the second OAM entry, we use <code>+ 4</code> for Y and <code>+ 5</code> for X.
+This can get pretty confusing, but luckily we only have two objects to keep track of.
+In the future, we’ll go over a much easier way to use OAM.</p>
+<pre><code class="language-rgbasm linenos start=90">{{#include ../../unbricked/collision/main.asm:momentum}}
+</code></pre>
+<p>You might want to compile your game again to see what this does.
+If you do, you should see the ball moving around, but it will just go through the walls and then fly offscreen.</p>
+<p>To fix this, we need to add collision detection so that the ball can bounce around.
+We’ll need to repeat the collision check a few times, so we’re going to make use of two functions to do this.</p>
+<div class="box tip">
+<p>Please do not get stuck on the details of this next function, as it uses some techniques and instructions we haven’t discussed yet.
+The basic idea is that it converts the position of the sprite to a location on the tilemap.
+This way, we can check which tile our ball is touching so that we know when to bounce!</p>
+</div>
+<pre><code class="language-rgbasm linenos start=226">{{#include ../../unbricked/collision/main.asm:get-tile}}
+</code></pre>
+<p>The next function is called <code>IsWallTile</code>, and it’s going to contain a list of tiles which the ball can bounce off of.</p>
+<pre><code class="language-rgbasm linenos start=258">{{#include ../../unbricked/collision/main.asm:is-wall-tile}}
+</code></pre>
+<p>This function might look a bit strange at first.
+Instead of returning its result in a <em>register</em>, like <code>a</code>, it returns it in <a href="part2/../part1/operations.html#flags">a <em>flag</em></a>: <code>Z</code>!
+If at any point a tile matches, the function has found a wall and exits with <code>Z</code> set.
+If the target tile ID (in <code>a</code>) matches one of the wall tile IDs, the corresponding <code>cp</code> will leave <code>Z</code> set; if so, we return immediately (via <code>ret z</code>), with <code>Z</code> set.
+But if we reach the last comparison and it still doesn’t set <code>Z</code>, then we will know that we haven’t hit a wall and don’t need to bounce.</p>
+<h2 id="putting-it-together"><a class="header" href="#putting-it-together">Putting it together</a></h2>
+<p>Time to use these new functions to add collision detection!
+Add the following after the code that updates the ball’s position:</p>
+<pre><code class="language-rgbasm linenos start=112">{{#include ../../unbricked/collision/main.asm:first-tile-collision}}
+</code></pre>
+<p>You’ll see that when we load the sprite’s positions, we subtract from them before calling <code>GetTileByPixel</code>.
+You might remember from the last chapter that OAM positions are slightly offset; that is, (0, 0) in OAM is actually completely offscreen.
+These <code>sub</code> instructions undo this offset.</p>
+<p>However, there’s a bit more to this: you might have noticed that we subtracted an extra pixel from the Y position.
+That’s because (as the label suggests), this code is checking for a tile above the ball.
+We actually need to check <em>all four</em> sides of the ball so we know how to change the momentum according to which side collided, so… let’s add the rest!</p>
+<pre><code class="language-rgbasm linenos start=128">{{#include ../../unbricked/collision/main.asm:tile-collision}}
+</code></pre>
+<p>That was a lot, but now the ball bounces around your screen!
+There’s just one last thing to do before this chapter is over, and thats ball-to-paddle collision.</p>
+<h2 id="paddle-bounce"><a class="header" href="#paddle-bounce">Paddle bounce</a></h2>
+<p>Unlike with the tilemap, there’s no position conversions to do here, just straight comparisons.
+However, for these, we will need <a href="part2/../part1/operations.html#flags">the <em>carry</em> flag</a>.
+The carry flag is notated as <code>C</code>, like how the zero flag is notated as <code>Z</code>, but don’t confuse it with the <code>c</code> register!</p>
+<div class="box tip">
+<p class="box-title">A refresher on comparisons</p><p>Just like <code>Z</code>, you can use the carry flag to jump conditionally.
+However, while <code>Z</code> is used to check if two numbers are equal, <code>C</code> can be used to check if a number is greater than or smaller than another one.
+For example, <code>cp a, b</code> sets <code>C</code> if <code>a &lt; b</code>, and clears it if <code>a &gt;= b</code>.
+(If you want to check <code>a &lt;= b</code> or <code>a &gt; b</code>, you can use <code>Z</code> and <code>C</code> in tandem with two <code>jp</code> instructions.)</p>
+</div>
+<p>Armed with this knowledge, let’s work through the paddle bounce code:</p>
+<pre><code class="language-rgbasm linenos start=171">{{#include ../../unbricked/collision/main.asm:paddle-bounce}}
+</code></pre>
+<p>The Y position’s check is simple, since our paddle is flat.
+However, the X position has two checks which widen the area the ball can bounce on.
+First we add 16 to the ball’s position; if the ball is more than 16 pixels to the right of the paddle, it shouldn’t bounce.
+Then we undo this by subtracting 16, and while we’re at it, subtract another 8 pixels; if the ball is more than 8 pixels to the left of the paddle, it shouldn’t bounce.</p>
+<svg viewBox="-10 -10 860 520">
+	<style>
+		text { text-anchor: middle; fill: var(--fg); font-size: 20px; }
+		.left { text-anchor: start; }
+		.right { text-anchor: end; }
+		.grid { stroke: var(--fg); opacity: 0.7; }
+		.ball { stroke: teal; }
+		.paddle { stroke: orange; }
+		.excl { stroke: red; } text.excl { stroke: initial; fill: red; font-family: "Source Code Pro", Consolas, "Ubuntu Mono", Menlo, "DejaVu Sans Mono", monospace, monospace !important; }
+		/* Overlays */
+		rect, polyline { opacity: 0.5; stroke-width: 3; }
+		/* Arrow */
+		polygon { stroke: inherit; fill: var(--bg); }
+		use + line { stroke-dasharray: 0 32 999; stroke-width: 2; }
+	</style>
+	<defs>
+		<polygon id="arrow-head" points="0,0 -40,-16 -32,0 -40,16" stroke="context-stroke"/>
+		<pattern id="ball-hatched" viewBox="0 0 4 4" width="8" height="8" patternUnits="userSpaceOnUse">
+			<line x1="5" y1="-1" x2="-1" y2="5" class="ball"/>
+			<line x1="5" y1="3" x2="3" y2="5" class="ball"/>
+			<line x1="1" y1="-1" x2="-1" y2="1" class="ball"/>
+		</pattern>
+		<pattern id="paddle-hatched" viewBox="0 0 4 4" width="8" height="8" patternUnits="userSpaceOnUse">
+			<line x1="5" y1="-1" x2="-1" y2="5" class="paddle"/>
+			<line x1="5" y1="3" x2="3" y2="5" class="paddle"/>
+			<line x1="1" y1="-1" x2="-1" y2="1" class="paddle"/>
+		</pattern>
+		<pattern id="excl-hatched" viewBox="0 0 4 4" width="8" height="8" patternUnits="userSpaceOnUse">
+			<line x1="5" y1="-1" x2="-1" y2="5" class="excl"/>
+			<line x1="5" y1="3" x2="3" y2="5" class="excl"/>
+			<line x1="1" y1="-1" x2="-1" y2="1" class="excl"/>
+		</pattern>
+	</defs>
+	<image x="128" y="0" width="256" height="256" href="../assets/part2/img/ball.png"/>
+	<rect x="128" y="0" width="32" height="32" fill="url(#ball-hatched)"/>
+	<image x="288" y="256" width="256" height="256" href="../assets/part2/img/paddle.png"/>
+	<rect x="288" y="256" width="32" height="32" fill="url(#paddle-hatched)"/>
+	<line class="grid" x1="-10" y1="0" x2="850" y2="0"/>
+	<line class="grid" x1="-10" y1="32" x2="850" y2="32"/>
+	<line class="grid" x1="-10" y1="64" x2="850" y2="64"/>
+	<line class="grid" x1="-10" y1="96" x2="850" y2="96"/>
+	<line class="grid" x1="-10" y1="128" x2="850" y2="128"/>
+	<line class="grid" x1="-10" y1="160" x2="850" y2="160"/>
+	<line class="grid" x1="-10" y1="192" x2="850" y2="192"/>
+	<line class="grid" x1="-10" y1="224" x2="850" y2="224"/>
+	<line class="grid" x1="-10" y1="256" x2="850" y2="256"/>
+	<line class="grid" x1="-10" y1="288" x2="850" y2="288"/>
+	<line class="grid" x1="-10" y1="320" x2="850" y2="320"/>
+	<line class="grid" x1="-10" y1="352" x2="850" y2="352"/>
+	<line class="grid" x1="0" y1="-20" x2="0" y2="351"/>
+	<line class="grid" x1="32" y1="-20" x2="32" y2="351"/>
+	<line class="grid" x1="64" y1="-20" x2="64" y2="351"/>
+	<line class="grid" x1="96" y1="-20" x2="96" y2="351"/>
+	<line class="grid" x1="128" y1="-20" x2="128" y2="351"/>
+	<line class="grid" x1="160" y1="-20" x2="160" y2="351"/>
+	<line class="grid" x1="192" y1="-20" x2="192" y2="351"/>
+	<line class="grid" x1="224" y1="-20" x2="224" y2="351"/>
+	<line class="grid" x1="256" y1="-20" x2="256" y2="351"/>
+	<line class="grid" x1="288" y1="-20" x2="288" y2="351"/>
+	<line class="grid" x1="320" y1="-20" x2="320" y2="351"/>
+	<line class="grid" x1="352" y1="-20" x2="352" y2="351"/>
+	<line class="grid" x1="384" y1="-20" x2="384" y2="351"/>
+	<line class="grid" x1="416" y1="-20" x2="416" y2="351"/>
+	<line class="grid" x1="448" y1="-20" x2="448" y2="351"/>
+	<line class="grid" x1="480" y1="-20" x2="480" y2="351"/>
+	<line class="grid" x1="512" y1="-20" x2="512" y2="351"/>
+	<line class="grid" x1="544" y1="-20" x2="544" y2="351"/>
+	<line class="grid" x1="576" y1="-20" x2="576" y2="351"/>
+	<line class="grid" x1="608" y1="-20" x2="608" y2="351"/>
+	<line class="grid" x1="640" y1="-20" x2="640" y2="351"/>
+	<line class="grid" x1="672" y1="-20" x2="672" y2="351"/>
+	<line class="grid" x1="704" y1="-20" x2="704" y2="351"/>
+	<line class="grid" x1="736" y1="-20" x2="736" y2="351"/>
+	<line class="grid" x1="768" y1="-20" x2="768" y2="351"/>
+	<line class="grid" x1="800" y1="-20" x2="800" y2="351"/>
+	<line class="grid" x1="832" y1="-20" x2="832" y2="351"/>
+	<rect x="128" y="0" width="256" height="256" class="ball" style="fill: none;"/>
+	<polyline points="288,352 288,256 544,256 544,352" class="paddle" style="fill: none;"/>
+	<rect x="-15" y="-15" width="47" height="440" class="excl" fill="url(#excl-hatched)"/>
+	<text x="40" y="430" class="excl left">jp c, DoNotBounce</text>
+	<rect x="800" y="-15" width="52" height="510" class="excl" fill="url(#excl-hatched)"/>
+	<text x="790" y="500" class="excl right">jp nc, DoNotBounce</text>
+	<use href="#arrow-head" x="48" y="380" transform="rotate(-180,48,380)" class="paddle"/><line x1="48" y1="380" x2="304" y2="380" class="paddle"/>
+	<text x="176" y="400">- 8</text>
+	<use href="#arrow-head" x="304" y="450" class="paddle"/><line x1="304" y1="450" x2="48" y2="450" class="paddle"/>
+	<use href="#arrow-head" x="816" y="450" class="paddle"/><line x1="816" y1="450" x2="304" y2="450" class="paddle"/>
+	<text x="432" y="470">+ 8 + 16</text>
+</svg>
+<div class="box tip">
+<p class="box-title">Paddle width</p><p>You might be wondering why we checked 16 pixels to the right but only 8 pixels to the left.
+Remember that OAM positions represent the upper-<em>left</em> corner of a sprite, so the center of our paddle is actually 4 pixels to the right of the position in OAM.
+When you consider this, we’re actually checking 12 pixels out on either side from the center of the paddle.</p>
+<p>12 pixels might seem like a lot, but it gives some tolerance to the player in case their positioning is off.
+If you’d prefer to make this easier or more difficult, feel free to adjust the values!</p>
+</div>
+<h2 id="bonus-tweaking-the-bounce-height"><a class="header" href="#bonus-tweaking-the-bounce-height">BONUS: tweaking the bounce height</a></h2>
+<p>You might notice that the ball seems to “sink” into the paddle a bit before bouncing. This is because the ball bounces when its top row of pixels aligns with the paddle’s top row (see the image above). If you want, try to adjust this so that the ball bounces when its bottom row of pixels touches the paddle’s top.</p>
+<p>Hint: you can do this with just a single instruction!</p>
+<details><summary>Answer:</summary>
+<pre><code class="language-diff linenos start=171">	ld a, [_OAMRAM]
+	ld b, a
+	ld a, [_OAMRAM + 4]
++	sub a, 6
+	cp a, b
+</code></pre>
+<p>Alternatively, you can add <code>add a, 6</code> just after <code>ld a, [_OAMRAM]</code>.</p>
+<p>In both cases, try playing with that <code>6</code> value; see what feels right!</p>
+</details>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="work-in-progress"><a class="header" href="#work-in-progress">Work in progress</a></h1>
+<div class="box warning">
+<p class="box-title">🚧 🚧 🚧 🚧 🚧 🚧 🚧</p><p>As explained in the initial tutorial presentation, Part Ⅱ consists of us building an <em>Arkanoid</em> game.
+However, this is not finished yet; lessons are uploaded as they are made, so the tutorial just abruptly stops at some point.
+Sorry!</p>
+<p>Please hold tight while I (and others!) are working on this, maybe <a href="https://twitter.com/issotm">follow me on Twitter</a> for (infrequent) updates, and go to the next page to find out what you can do in the meantime!</p>
+<p>Thank you for your patience 😊 and see you around on GBDev!</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="where-to-go-next"><a class="header" href="#where-to-go-next">Where to go next</a></h1>
+<p>Oh.
+Well, you’ve reached the end of the tutorial…
+And yes, as you can see, it’s not finished <em>yet</em>.
+I’m actively working on fixing that, though, please be a little patient :)</p>
+<p>In the meantime, the best course of action is to peruse the <a href="resources.html">resources</a> in the next section, and experiment by yourself.
+Well, given that, it may be a good idea to <a href="help-feedback.html">ask around</a> for advice.
+A lot of the problems and questions you will be encountering have already been solved, so others can—and will!—help you getting started faster.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="resources"><a class="header" href="#resources">Resources</a></h1>
+<p>A.k.a. “where to go from here”.</p>
+<h2 id="help-channels"><a class="header" href="#help-channels">Help channels</a></h2>
+<ul>
+<li><a href="https://gbdev.io">GBDev community home page</a> and <a href="https://gbdev.io/chat">chat channels</a>.</li>
+</ul>
+<h2 id="other-tutorials"><a class="header" href="#other-tutorials">Other tutorials</a></h2>
+<ul>
+<li><a href="https://eievui.ml/resources/interrupts">evie’s interrupts tutorial</a> should help you understand how to use interrupts, and what they are useful for.</li>
+<li><a href="https://github.com/tbsp/simple-gb-asm-examples">tbsp’s “Simple GB ASM examples”</a> is a collection of ROMs, each built from a single, fairly short source file.
+If you found this tutorial too abstract and/or want to get your feet wet, this is a good place to go to!</li>
+<li><a href="https://github.com/daid/gameboy-assembly-by-example">GB assembly by example</a>, Daid’s collection of code snippets.
+Consider this a continuation of the tutorial, but without explanations; it’s still useful to peruse them and ask about it, they are overall good quality.</li>
+</ul>
+<h2 id="complements"><a class="header" href="#complements">Complements</a></h2>
+<p>Did you enjoy the tutorial or one of the above?
+The following should prove useful along the rest of your journey!</p>
+<ul>
+<li><a href="https://rgbds.gbdev.io/docs/">RGBDS’ online documentation</a> is always useful!
+Notably, you’ll find <a href="https://rgbds.gbdev.io/docs/gbz80.7">an instruction reference</a> and <a href="https://rgbds.gbdev.io/docs/rgbasm.5">the reference on RGBASM’s syntax and features</a>.</li>
+<li><a href="https://gbdev.io/pandocs">Pan Docs</a> are <em>the</em> reference for all Game Boy hardware.
+It’s a good idea to consult it if you aare unsure how a register works, or if you’re wondering how to do something.</li>
+<li><a href="https://gbdev.io/gb-opcodes/optables">gb-optables</a> is a more compact instruction table, it becomes more useful when you stop needing the instructions’ descriptions.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="special-thanks"><a class="header" href="#special-thanks">Special Thanks</a></h1>
+<p>Big thank you to <a href="https://www.pouet.net/user.php?who=21982">Twoflower/Triad</a> for making the Hello World graphic.</p>
+<p>I can’t thank enough Chloé and many others for their continued support.</p>
+<p>Thanks to the GBDev community for being so nice throughout the years.</p>
+<p><strong>You are all great. Thank you so very much.</strong></p>
+<hr />
+<p>Thank you to the <a href="https://www.rust-lang.org">Rust language</a> team for making <a href="https://github.com/rust-lang/mdBook">mdBook</a>, which powers this book (this honestly slick design is the stock one!!)</p>
+<p>Greets to AYCE, Phantasy, TPPDevs/RainbowDevs, Plutiedev, lft/kryo :)</p>
+<p>Shoutouts to <a href="https://eievui.ml">Eievui</a>, <a href="https://github.com/Rangi42">Rangi</a>, <a href="https://github.com/MarkSixtyFour">MarkSixtyFour</a>, <a href="https://github.com/aaaaaa123456789">ax6</a>, <a href="https://github.com/basxto">Baŝto</a>, <a href="https://github.com/bbbbbr">bbbbbr</a>, and <a href="https://github.com/bitnenfer">bitnenfer</a>!</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="js/linenos.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </body>
+</html>

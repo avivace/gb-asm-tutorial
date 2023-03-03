@@ -50,7 +50,7 @@ jobs:
         MDBOOK_BUILD__CREATE_MISSING: "false" # Prevent creating missing files in SUMMARY.md
         MDBOOK_OUTPUT__LINKCHECK__COMMAND: "../mdbook-linkcheck"
         MDBOOK_OUTPUT__LINKCHECK__OPTIONAL: "false"
-        MDBOOK_BOOK__LANGUAGE=it
+        MDBOOK_BOOK__LANGUAGE: "it"
       run: |
         mdbook build -d book/it
         mv book/it/custom book/custom/it

@@ -21,6 +21,7 @@ jobs:
         mdbook-version: latest
 
     - name: Install i18n-helpers
+      working-directory: gb-asm-tutorial/
       run: cargo install --path i18n-helpers --locked
       shell: bash
 
